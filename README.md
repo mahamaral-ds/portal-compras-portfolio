@@ -4,7 +4,7 @@
 
 [![Publicar no GitHub Pages](https://github.com/mahamaral-ds/portal-compras-portfolio/actions/workflows/pages.yml/badge.svg)](https://github.com/mahamaral-ds/portal-compras-portfolio/actions/workflows/pages.yml)
 
-Portal de BI para a área de Compras de uma rede de restaurantes: um menu central dá acesso a onze módulos
+Portal de BI para a área de Compras de uma rede de restaurantes: um menu central dá acesso a dez módulos
 (dashboards independentes) com gasto, fornecedores, preços, custo da mercadoria, desempenho de entrega,
 compliance, projetos e capacitação.
 
@@ -35,7 +35,6 @@ exibidos em grade de cards. Ele mostra o período da base e destaca o módulo de
 | **Pipeline de Projetos** | Kanban de projetos (filtros, detalhes, criação e edição) e **Planejamento de RFPs** (calendário de rodadas por categoria), com modo de edição. |
 | **Gestão do Conhecimento** | Biblioteca de materiais e Guia de Strategic Sourcing em 8 etapas, com carrosséis de slides e PDF para download. |
 | **Compliance** | NF Sequencial: concentração da numeração de notas por fornecedor, com farol (normal, atenção, alto, crítico) e cards de status clicáveis. |
-| **Supply Chat** | Busca em linguagem natural sobre os dados do portal (motor local; opcionalmente ligado ao Claude pelo servidor em `server/`). |
 
 Componentes compartilhados (`shared/`), usados em todas as páginas:
 
@@ -49,8 +48,7 @@ Componentes compartilhados (`shared/`), usados em todas as páginas:
 Na **demonstração**, a edição do Pipeline (projetos e RFPs) fica habilitada. O botão "Habilitar edição" pede a senha
 de demonstração **`demo`**, que aparece na própria janela. Como o site é estático, as edições ficam salvas só no
 `localStorage` do navegador de quem visita: um aviso na página explica isso, e o botão "Restaurar dados de exemplo"
-volta aos dados originais. No site publicado, o **Supply Chat** usa sempre o motor local (o modo com Claude depende do
-servidor em `server/`, que só roda na sua máquina).
+volta aos dados originais.
 
 ## Tecnologias
 
@@ -58,7 +56,6 @@ servidor em `server/`, que só roda na sua máquina).
   e [SheetJS](https://sheetjs.com/) para a exportação em Excel. As duas bibliotecas estão incluídas em `modules/*/`.
 - **Dados e ETL:** Python 3 com pandas, NumPy e openpyxl.
 - **Material gráfico:** Pillow; os slides usam a fonte DejaVu Sans, que vem com o matplotlib.
-- **Assistente (opcional):** servidor local em Python com a API do Claude (`server/`, ver `server/README.md`).
 - **Publicação:** GitHub Pages, com deploy automático pelo GitHub Actions (`.github/workflows/pages.yml`).
 
 ## Estrutura
@@ -83,7 +80,6 @@ projeto_portal_compras_portfolio/
 │   ├── gerar_favicon_png.py        favicon.png a partir das formas do favicon.svg
 │   ├── montar_site.py              monta _site/ só com o que vai para o ar (HTML, CSS, JS, imagens, PDF)
 │   └── verificar_vazamento.py      bloqueia a publicação se achar credenciais ou termos sensíveis
-├── server/                    protótipo do Assistente com Claude (opcional)
 └── raw-data/                  planilhas geradas (fora do Git; recriadas pelo gerador)
 ```
 
@@ -110,7 +106,7 @@ Todo `git push` na branch `main` dispara o workflow, que:
    sensíveis cadastrados no secret `TERMOS_SENSIVEIS`;
 2. **Gera os dados sintéticos** e reconstrói os `data.js` (`scripts/build_all.py`, semente fixa);
 3. **Monta a pasta do site** (`scripts/montar_site.py` → `_site/`), só com HTML, CSS, JS, imagens e PDF.
-   Scripts Python, servidor e planilhas não vão para o ar;
+   Scripts Python e planilhas não vão para o ar;
 4. **Verifica de novo** a pasta `_site/`, que é exatamente o que será publicado;
 5. **Publica** no GitHub Pages.
 

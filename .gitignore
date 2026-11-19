@@ -3,7 +3,6 @@ __pycache__/
 *.pyc
 *.pyo
 .venv/
-server/.venv/
 
 # Planilhas de origem: geradas por scripts/gerar_dados_sinteticos.py (semente fixa).
 # Ficam fora do repositorio porque podem ser recriadas de forma identica a qualquer momento.
@@ -15,8 +14,7 @@ raw-data/
 # Artefatos de distribuicao pontual (gerados por build_standalone.py)
 modules/*/dist/
 
-# Assistente (server/): registros de perguntas e chaves de API nunca vao para o repositorio
-server/logs/
+# Chaves de API e variaveis de ambiente nunca vao para o repositorio
 .env
 .env.*
 

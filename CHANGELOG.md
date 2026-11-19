@@ -7,6 +7,9 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Unreleased]
 
+### Removido
+- Grupo "Assistente" do menu, com a página Supply Chat (`modules/supply-chat/`) e o servidor do assistente (`server/`).
+
 ### Adicionado
 - Publicação no GitHub Pages com deploy automático a cada push na `main` (`.github/workflows/pages.yml`).
 - Verificação de vazamento (`scripts/verificar_vazamento.py`) no código, no histórico do Git e no site montado,
@@ -15,7 +18,6 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 - Pipeline de Projetos: aviso de demonstração e botão "Restaurar dados de exemplo".
 
 ### Alterado
-- Supply Chat: só procura o servidor do assistente quando aberto em `localhost` (sem requisições 404 no site estático).
 - `requirements.txt` com versões fixas, para o workflow gerar os mesmos dados da máquina local.
 
 ## [1.0.0] - 2026-10-30

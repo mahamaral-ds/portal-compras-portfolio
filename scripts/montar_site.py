@@ -2,7 +2,7 @@
 Monta a pasta que vai para o GitHub Pages (padrao: _site/), so com o que o navegador precisa.
 
 Entra:   index.html, 404.html, .nojekyll, assets/, shared/ e modules/ (HTML, CSS, JS, imagens e PDF)
-Fica de fora: scripts Python (build_data.py etc.), server/, scripts/, shared_py/, raw-data/, planilhas,
+Fica de fora: scripts Python (build_data.py etc.), scripts/, shared_py/, raw-data/, planilhas,
               caches e qualquer arquivo de configuracao.
 
 Uso (na raiz do projeto):
