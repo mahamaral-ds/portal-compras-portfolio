@@ -1,0 +1,94 @@
+:root{
+  --brand: #2453A6;
+  --brand-deep: #15306A;
+  --brand-light: #6E9BF0;
+  --brand-tint: #E8EEFA;
+  --ink: #121A2B;
+  --paper: #F6F7FA;
+  --surface: #FFFFFF;
+  --line: #E1E5EE;
+  --muted: #6B7385;
+  --active-green: #1F7A52;
+  --active-green-bg: #E7F3EC;
+  --sans-portal: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono-portal: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius-portal: 14px;
+}
+
+/* ===================== Topbar (usado em todos os modulos) ===================== */
+.portal-topbar{
+  background: var(--ink);
+  color:#EEF1F7;
+  font-family: var(--sans-portal);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 24px;
+  gap:16px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.portal-topbar .brand-mini{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.portal-topbar .brand-mini img{
+  height:20px;
+  display:block;
+  flex-shrink:0;
+}
+.portal-topbar .crumb{
+  font-family: var(--mono-portal);
+  font-size:11.5px;
+  letter-spacing:.05em;
+  color:rgba(238,241,247,0.65);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.portal-topbar .crumb strong{
+  color:#fff;
+  font-weight:600;
+}
+.portal-topbar .crumb-home-link{
+  color:inherit;
+  text-decoration:none;
+  cursor:pointer;
+}
+.portal-topbar .crumb-home-link:hover{
+  color:#fff;
+  text-decoration:underline;
+}
+.portal-back-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.18);
+  color:#EEF1F7;
+  font-family: var(--sans-portal);
+  font-size:12.5px;
+  font-weight:600;
+  padding:7px 14px;
+  border-radius:20px;
+  text-decoration:none;
+  white-space:nowrap;
+  transition: background .15s ease, border-color .15s ease;
+}
+.portal-back-btn:hover{
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.portal-back-btn svg{
+  width:14px;
+  height:14px;
+  flex-shrink:0;
+}
+
+@media (max-width:640px){
+  .portal-topbar .crumb{display:none;}
+  .portal-topbar{padding:9px 16px;}
+}

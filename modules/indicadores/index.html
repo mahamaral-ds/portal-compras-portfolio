@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indicadores · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">Indicadores</h1>
+      <p class="brand-sub" id="brandSub">KPIs executivos, CMV × inflação e PMP × DIO · Jan–Jun 2026</p>
+    </div>
+    <div class="header-meta">
+      Gerado em <strong id="genDate">—</strong><br>
+      <span id="genTotal">—</span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-view="visao" class="active">Visão Geral</button>
+  </nav>
+  <div class="period-bar" id="periodBar">
+    <span class="period-label">Período:</span>
+    <div class="period-chips" id="periodChips"></div>
+    <span class="period-note" id="periodNote">Ctrl+clique para selecionar vários meses</span>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= VISÃO GERAL ================= -->
+  <section class="view active" id="view-visao">
+
+    <div class="kpi-grid" id="kpiGrid" style="grid-template-columns:repeat(4,1fr);"></div>
+    <div class="kpi-grid" id="kpiGridExterno" style="grid-template-columns:repeat(4,1fr); margin-top:-6px;"></div>
+
+    <div class="grid-2 section-block">
+      <div class="card card-grafico">
+        <div class="section-title">CMV × Inflação de compras</div>
+        <p class="section-sub">Barras de 2025 (mais claras) e 2026 (sólidas) · linha de inflação disponível a partir de abr/2026</p>
+        <div class="chart-wrap">
+          <canvas id="chartCmvInflacao"></canvas>
+        </div>
+        <div class="meta-tag" id="cmvMelhoraTag" style="margin-top:8px;"></div>
+      </div>
+      <div class="card card-grafico">
+        <div class="section-title">Evolução mensal do gasto total</div>
+        <p class="section-sub" id="gastoMensalSub">Valor total comprado por mês</p>
+        <div class="chart-wrap">
+          <canvas id="chartGastoMensal"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">PMP × DIO</div>
+      <p class="section-sub">Prazo Médio de Pagamento vs. Estoque (DIO), em dias · metas 2026: PMP = 26 · DIO = 23 · série completa, independente do período selecionado acima</p>
+      <div class="card pmp-dio-card">
+        <div class="pmp-dio-side">
+          <div class="pmp-dio-side-month" id="pmpDioSideMonth">—</div>
+          <div class="pmp-dio-stat">
+            <div class="pmp-dio-stat-label pmp">PMP</div>
+            <div class="pmp-dio-stat-value" id="pmpDioValPmp">—</div>
+            <div class="pmp-dio-stat-delta" id="pmpDioDeltaPmp">—</div>
+          </div>
+          <div class="pmp-dio-stat">
+            <div class="pmp-dio-stat-label dio">Estoque (DIO)</div>
+            <div class="pmp-dio-stat-value" id="pmpDioValDio">—</div>
+            <div class="pmp-dio-stat-delta" id="pmpDioDeltaDio">—</div>
+          </div>
+          <div class="pmp-dio-divider"></div>
+          <div class="pmp-dio-stat">
+            <div class="pmp-dio-stat-label">Gap estoque − PMP</div>
+            <div class="pmp-dio-stat-value" id="pmpDioValGap">—</div>
+            <div class="pmp-dio-stat-delta" id="pmpDioDeltaGap">—</div>
+          </div>
+        </div>
+        <div class="pmp-dio-chart-wrap">
+          <div class="chart-wrap" style="height:300px;">
+            <canvas id="chartPmpDio"></canvas>
+          </div>
+        </div>
+      </div>
+      <p class="pmp-dio-destaques" id="pmpDioDestaques"></p>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  Indicadores calculados a partir da base consolidada de compras (<span id="footerPeriodo">—</span>). Dados sintéticos — empresa fictícia, projeto de portfólio.
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Indicadores',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="chart.umd.min.js"></script>
+<script src="../../shared/portal-charts.js"></script>
+<script src="../../shared/portal-period-filter.js"></script>
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

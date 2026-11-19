@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portal-portfolio",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8743"],
+      "port": 8743
+    },
+    {
+      "name": "pages-simulado",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8744", "--directory", "_preview"],
+      "port": 8744
+    }
+  ]
+}

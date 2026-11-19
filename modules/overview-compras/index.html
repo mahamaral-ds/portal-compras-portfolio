@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overview Compras · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">Overview Compras</h1>
+      <p class="brand-sub" id="brandSub">Panorama geral do setor de compras</p>
+    </div>
+    <div class="header-meta">
+      Gerado em <strong id="genDate">—</strong>
+    </div>
+  </div>
+  <div class="period-bar" id="periodBar">
+    <span class="period-label">Período:</span>
+    <div class="period-chips" id="periodChips"></div>
+    <span class="period-note">Ctrl+clique para selecionar vários meses</span>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="grid-3 section-block">
+
+    <div class="card card-alto">
+      <div class="section-title">Top 15 Fornecedores</div>
+      <p class="section-sub" id="topFornecedoresSub">Maior valor comprado no período</p>
+      <div class="chart-wrap cresce">
+        <canvas id="chartTopFornecedores"></canvas>
+      </div>
+    </div>
+
+    <div class="middle-col">
+      <div class="card">
+        <div class="section-title">Histórico CMV (últimos 4 meses)</div>
+        <p class="section-sub" id="cmvHistoricoSub">Últimos meses com KPI disponível — independe do período selecionado acima</p>
+        <div class="chart-wrap" style="height:250px;">
+          <canvas id="chartCmvHistorico"></canvas>
+        </div>
+      </div>
+      <div class="grid-2b">
+        <div class="card">
+          <div class="section-title">Top Categorias</div>
+          <p class="section-sub" id="topGruposSub">Maior valor comprado no período</p>
+          <div class="chart-wrap" style="height:270px;">
+            <canvas id="chartGrupo"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title">Top Verticais</div>
+          <p class="section-sub" id="topSegmentosSub">Maior valor comprado no período</p>
+          <div class="chart-wrap" style="height:270px;">
+            <canvas id="chartSegmento"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-alto">
+      <div class="section-title">Top 20 Itens</div>
+      <p class="section-sub" id="topItensSub">Maior valor comprado no período</p>
+      <div class="chart-wrap cresce">
+        <canvas id="chartTopItens"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  Panorama gerado a partir da base bruta de notas fiscais e da planilha de KPIs de Compras. Dados sintéticos — empresa fictícia, projeto de portfólio.
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Overview Compras',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="chart.umd.min.js"></script>
+<script src="../../shared/portal-charts.js"></script>
+<script src="../../shared/portal-period-filter.js"></script>
+<script src="../../shared/portal-pedidos.js"></script>
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

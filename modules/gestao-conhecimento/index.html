@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão do Conhecimento · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">Gestão do Conhecimento</h1>
+      <p class="brand-sub" id="brandSub">Central de capacitação e desenvolvimento do time de Compras</p>
+    </div>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= HOME (biblioteca) ================= -->
+  <section class="kc-view active" id="view-home">
+
+    <div class="kc-hero">
+      <div class="eyebrow">Central de Conhecimento</div>
+      <h2>Um só lugar para treinamentos, políticas, processos e boas práticas de Compras</h2>
+      <p>Esta área reúne, de forma organizada, os materiais que ajudam o time de Compras a se desenvolver e aplicar as melhores práticas do setor.</p>
+      <div class="hero-points">
+        <div class="hero-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg> 1 material disponível</div>
+        <div class="hero-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Consulta rápida ou estudo aprofundado</div>
+        <div class="hero-point"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg> Atualizada continuamente pelo setor</div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Categorias de conteúdo</div>
+      <p class="section-sub">Novos materiais serão adicionados a estas categorias ao longo do tempo</p>
+      <div class="cat-grid">
+        <button class="cat-card active" id="catTreinamentos" type="button">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg></div>
+          <h4>Treinamentos</h4>
+          <span class="count">1 material disponível</span>
+        </button>
+        <div class="cat-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6M9 11h3"/></svg></div>
+          <h4>Políticas</h4>
+          <span class="count">Em breve</span>
+        </div>
+        <div class="cat-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></div>
+          <h4>Processos</h4>
+          <span class="count">Em breve</span>
+        </div>
+        <div class="cat-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.3L22 9l-5 4.9L18.2 21 12 17.6 5.8 21 7 13.9 2 9l7.1-.7L12 2z"/></svg></div>
+          <h4>Boas Práticas</h4>
+          <span class="count">Em breve</span>
+        </div>
+        <div class="cat-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+          <h4>Materiais de Apoio</h4>
+          <span class="count">Em breve</span>
+        </div>
+        <div class="cat-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+          <h4>Apresentações</h4>
+          <span class="count">Em breve</span>
+        </div>
+        <div class="cat-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>
+          <h4>Documentos</h4>
+          <span class="count">Em breve</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" id="materiaisTreinamentos">
+      <div class="section-title">Treinamentos</div>
+      <p class="section-sub">Materiais para desenvolvimento e capacitação dos compradores</p>
+
+      <div class="material-card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg></div>
+        <div>
+          <h3>Guia de Strategic Sourcing<span class="badge-new">Novo</span></h3>
+          <div class="meta">
+            <span>📅 Setembro de 2026</span>
+            <span>📄 12 páginas</span>
+            <span>🏷️ Metodologia de Compras Estratégicas</span>
+          </div>
+          <p>Guia prático de Strategic Sourcing em 8 etapas, com exemplos da rotina de compras de uma rede de restaurantes — do perfil da categoria e do mercado fornecedor ao custo total, cotação, negociação e acompanhamento dos acordos.</p>
+          <div class="actions">
+            <button class="btn btn-primary" id="btnAbrirTreinamento" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              Acessar conteúdo
+            </button>
+            <a class="btn btn-secondary" href="assets/guia-strategic-sourcing.pdf" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              Baixar PDF para estudo
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= DETALHE: GUIA DE STRATEGIC SOURCING ================= -->
+  <section class="kc-view" id="view-strategic-sourcing">
+
+    <div class="detail-header">
+      <div>
+        <button class="back-link" id="btnVoltarHome" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Voltar para Gestão do Conhecimento
+        </button>
+        <h2>Guia de Strategic Sourcing</h2>
+        <div class="meta">Setembro de 2026 · Metodologia de Compras Estratégicas em 8 etapas</div>
+      </div>
+      <a class="btn btn-primary" href="assets/guia-strategic-sourcing.pdf" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+        Baixar material completo (PDF)
+      </a>
+    </div>
+
+    <nav class="step-nav" id="stepNav">
+      <button data-step="visao" class="active"><span class="num">•</span>Visão Geral</button>
+      <button data-step="e1"><span class="num">1</span>Requerimentos Internos</button>
+      <button data-step="e2"><span class="num">2</span>Mercado Fornecedor</button>
+      <button data-step="e3"><span class="num">3</span>Custo Total</button>
+      <button data-step="e4"><span class="num">4</span>Modelo de Fornecimento</button>
+      <button data-step="e5"><span class="num">5</span>Análise de Fornecedores</button>
+      <button data-step="e6"><span class="num">6</span>Cotação</button>
+      <button data-step="e7"><span class="num">7</span>Negociação</button>
+      <button data-step="e8"><span class="num">8</span>Acordos e Monitoramento</button>
+    </nav>
+
+    <!-- ===== VISÃO GERAL ===== -->
+    <div class="step-pane active" id="pane-visao">
+
+      <div class="section-block">
+        <div class="section-title">Para que serve este guia</div>
+        <div class="grid-3">
+          <div class="reason-card"><div class="n">1</div><h5>Dar um roteiro comum</h5><p>Todos os compradores seguem as mesmas etapas, com as mesmas perguntas e entregas em cada uma.</p></div>
+          <div class="reason-card"><div class="n">2</div><h5>Ligar análise e prática</h5><p>Cada etapa aponta para as páginas do portal que trazem os dados necessários (gasto, preço, OTIF, CMV).</p></div>
+          <div class="reason-card"><div class="n">3</div><h5>Registrar o que funcionou</h5><p>Os exemplos são casos de categorias típicas de restaurante, para servir de modelo nas próximas rodadas.</p></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">Por que trabalhar com Strategic Sourcing?</div>
+        <p class="section-sub">Sete ganhos esperados quando a categoria é gerida de forma estruturada</p>
+        <div class="grid-4">
+          <div class="reason-card"><div class="n">1</div><h5>Custo total menor</h5><p>O alvo é o custo total da categoria — frete, perdas, armazenagem e retrabalho entram na conta, não só o preço da nota.</p></div>
+          <div class="reason-card"><div class="n">2</div><h5>Fornecedores melhores</h5><p>A escolha passa a considerar qualidade, pontualidade, capacidade e conformidade, além do preço.</p></div>
+          <div class="reason-card"><div class="n">3</div><h5>Parcerias de longo prazo</h5><p>Com fornecedores-chave, o foco sai da compra pontual e vai para planejamento conjunto e estabilidade de oferta.</p></div>
+          <div class="reason-card"><div class="n">4</div><h5>Revisão contínua</h5><p>As categorias são revisitadas em ciclos, o que permite reagir rápido a safra, câmbio e mudanças de cardápio.</p></div>
+          <div class="reason-card"><div class="n">5</div><h5>Decisão com dados</h5><p>Histórico de preço, curva ABC e desempenho de entrega dão base objetiva para negociar.</p></div>
+          <div class="reason-card"><div class="n">6</div><h5>Menos risco</h5><p>Evita dependência de um único fornecedor e antecipa problemas de abastecimento e de conformidade.</p></div>
+          <div class="reason-card"><div class="n">7</div><h5>Rotina mais eficiente</h5><p>Processos padronizados reduzem pedidos emergenciais, retrabalho e tempo gasto com cotações repetidas.</p></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">Categorias de compras</div>
+        <p class="section-sub">A unidade de trabalho de toda a metodologia</p>
+        <div class="concept-card" style="margin-bottom:14px;">
+          <p><b>Uma categoria é um conjunto de itens ou serviços</b> que compartilham a mesma base de fornecedores e podem ser negociados juntos — por exemplo, Hortifrúti, Proteínas ou Embalagens.</p>
+        </div>
+        <div class="grid-3">
+          <div class="concept-card"><h5>Como agrupar</h5><p>Itens que os mesmos fornecedores conseguem entregar, com uso e especificação parecidos.</p></div>
+          <div class="concept-card"><h5>Critérios práticos</h5><ul><li>Mesmos fornecedores</li><li>Mesma forma de produção ou origem</li><li>Mesmo uso na cozinha ou no bar</li><li>Especificações semelhantes</li></ul></div>
+          <div class="concept-card"><h5>Por que importa</h5><p>Facilita priorizar onde agir, comparar preços entre casas e montar uma estratégia única para o grupo.</p></div>
+        </div>
+        <div id="car-visao-categorias"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">A metodologia em 8 etapas</div>
+        <p class="section-sub">Clique em uma etapa para ver o conteúdo completo</p>
+        <div class="step-flow" id="stepFlow">
+          <div class="step-flow-card" data-goto="e1"><div class="num">1</div><h5>Definir Requerimentos Internos</h5></div>
+          <div class="step-flow-card" data-goto="e2"><div class="num">2</div><h5>Analisar Mercado Fornecedor</h5></div>
+          <div class="step-flow-card" data-goto="e3"><div class="num">3</div><h5>Calcular o Custo Total</h5></div>
+          <div class="step-flow-card" data-goto="e4"><div class="num">4</div><h5>Escolher o Modelo de Fornecimento</h5></div>
+          <div class="step-flow-card" data-goto="e5"><div class="num">5</div><h5>Analisar Fornecedores</h5></div>
+          <div class="step-flow-card" data-goto="e6"><div class="num">6</div><h5>Conduzir a Cotação</h5></div>
+          <div class="step-flow-card" data-goto="e7"><div class="num">7</div><h5>Negociar</h5></div>
+          <div class="step-flow-card" data-goto="e8"><div class="num">8</div><h5>Implementar e Monitorar Acordos</h5></div>
+        </div>
+        <div id="car-visao-metodologia"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">Combinados para as sessões de estudo</div>
+        <div class="grid-3">
+          <div class="concept-card"><h5>O que buscamos</h5><ul><li>Trocar experiências entre compradores</li><li>Aplicar o método em categorias reais</li><li>Sair com próximos passos definidos</li></ul></div>
+          <div class="concept-card"><h5>O que evitamos</h5><ul><li>Partir do "sempre foi assim"</li><li>Julgar ideias antes de testá-las</li><li>Discutir preço sem olhar o custo total</li></ul></div>
+          <div class="concept-card"><h5>Como participar</h5><ul><li>Traga dados da sua categoria</li><li>Use as páginas do portal como apoio</li><li>Registre as decisões no Pipeline de Projetos</li></ul></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== ETAPA 1 ===== -->
+    <div class="step-pane" id="pane-e1">
+      <div class="section-title">Etapa 1 — Definir Requerimentos Internos</div>
+      <p class="section-sub">Antes de ir ao mercado, entender a categoria dentro de casa</p>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Perfil da categoria</div>
+        <p class="section-sub">Seis dimensões para descrever qualquer categoria de compras</p>
+        <div class="grid-3">
+          <div class="concept-card"><h5>Preço</h5><ul><li>Preço pago por casa e por fornecedor</li><li>Histórico e sazonalidade</li><li>Unidade de medida de referência</li><li>Formação de preço do item</li></ul></div>
+          <div class="concept-card"><h5>Volume</h5><ul><li>Consumo por casa e por vertical</li><li>Sazonalidade (férias, datas comemorativas)</li><li>Tendência de consumo</li><li>Mudanças de cardápio previstas</li></ul></div>
+          <div class="concept-card"><h5>Especificação</h5><ul><li>O que a receita realmente exige</li><li>Padrão de qualidade e calibre</li><li>Grau de padronização entre marcas</li><li>Embalagem e porcionamento</li><li>Alternativas sustentáveis</li></ul></div>
+          <div class="concept-card"><h5>Processo</h5><ul><li>Quem solicita e quem aprova</li><li>Frequência dos pedidos</li><li>Recebimento e conferência</li><li>Como a qualidade é avaliada</li><li>Riscos de falta no salão</li></ul></div>
+          <div class="concept-card"><h5>Barreiras</h5><ul><li>Regras sanitárias e de rotulagem</li><li>Preferências do chef ou da marca</li><li>Contratos vigentes</li><li>Restrições logísticas por região</li></ul></div>
+          <div class="concept-card"><h5>Base fornecedora</h5><ul><li>Quantos fornecedores fazem 80% do gasto</li><li>Peso do principal fornecedor</li><li>Fornecedores únicos por item</li><li>Desempenho de entrega (OTIF)</li></ul></div>
+        </div>
+        <div id="car-e1-perfil"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Análise SWOT</div>
+        <p class="section-sub">Resume, em um quadro, o que favorece e o que ameaça a estratégia da categoria</p>
+        <div class="grid-2">
+          <div class="concept-card">
+            <span class="tag tag-conceitual">Conceitual</span>
+            <h5>Ambiente interno</h5>
+            <p><b>Forças</b></p>
+            <ul><li>Em que somos relevantes para o fornecedor?</li><li>Que volume, regularidade ou pagamento podemos oferecer?</li><li>Que dados e processos já temos?</li></ul>
+            <p style="margin-top:10px;"><b>Fraquezas</b></p>
+            <ul><li>Onde as especificações variam sem necessidade?</li><li>Onde falta previsão de demanda?</li><li>Que hábitos de compra encarecem a categoria?</li></ul>
+          </div>
+          <div class="concept-card">
+            <span class="tag tag-conceitual">Conceitual</span>
+            <h5>Ambiente externo</h5>
+            <p><b>Ameaças</b></p>
+            <ul><li>Clima, safra e câmbio</li><li>Concentração de fornecedores</li><li>Mudanças regulatórias ou tributárias</li><li>Concorrência pela mesma oferta</li></ul>
+            <p style="margin-top:10px;"><b>Oportunidades</b></p>
+            <ul><li>Novos fornecedores regionais</li><li>Produtos substitutos</li><li>Queda de preço de insumos</li><li>Tecnologia e novos formatos de entrega</li></ul>
+          </div>
+        </div>
+        <details class="accordion" style="margin-top:14px;">
+          <summary><span class="label"><span class="tag tag-ilustrativo" style="margin:0;">Exemplo ilustrativo</span> SWOT da categoria Hortifrúti</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></summary>
+          <div class="accordion-body">
+            <p><b>Forças:</b> volume concentrado em duas capitais e pedidos semanais previsíveis, o que interessa a distribuidores maiores.</p>
+            <p><b>Fraquezas:</b> cada marca usa uma especificação de tomate e de folhas; a previsão de consumo ainda é feita casa a casa.</p>
+            <p><b>Ameaças:</b> entressafra e chuvas fortes podem elevar o preço de legumes em até 40% em poucas semanas.</p>
+            <p><b>Oportunidades:</b> produtores regionais próximos às casas fora das capitais e contratos por safra para os itens de maior gasto.</p>
+          </div>
+        </details>
+        <div id="car-e1-swot"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Alavancas de valor</div>
+        <p class="section-sub">Com o perfil e a SWOT prontos, escolha onde atuar</p>
+        <table class="kc-table">
+          <thead><tr><th style="width:26%;">Alavanca</th><th>Como aplicar na categoria</th></tr></thead>
+          <tbody>
+            <tr><td><b>Padronizar especificações</b></td><td>Unificar calibre, corte e embalagem entre as marcas quando a receita permitir</td></tr>
+            <tr><td><b>Ajustar a base de fornecedores</b></td><td>Reduzir fornecedores com gasto pequeno · Desenvolver alternativas regionais</td></tr>
+            <tr><td><b>Concentrar volume</b></td><td>Negociar o volume do grupo inteiro em vez de casa a casa</td></tr>
+            <tr><td><b>Negociar com base em fatos</b></td><td>Comparar preço por unidade de referência entre casas · Acompanhar índices de mercado da categoria</td></tr>
+            <tr><td><b>Melhorar processo e logística</b></td><td>Revisar frequência de entrega, pedido mínimo e janela de recebimento</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 2 ===== -->
+    <div class="step-pane" id="pane-e2">
+      <div class="section-title">Etapa 2 — Analisar Mercado Fornecedor</div>
+      <p class="section-sub">Entendida a categoria, é hora de olhar para quem vende</p>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Perfil do mercado fornecedor</div>
+        <p class="section-sub">Três frentes de análise</p>
+        <div class="grid-3">
+          <div class="concept-card"><h5>Quem são os fornecedores</h5><p>Principais empresas, porte, regiões atendidas e tipo (indústria, distribuidor, produtor).</p></div>
+          <div class="concept-card"><h5>Como o mercado funciona</h5><p>Tamanho, concentração, sazonalidade e o que forma o preço (commodity, câmbio, frete).</p></div>
+          <div class="concept-card"><h5>Estrutura de custos</h5><p>Peso de matéria-prima, mão de obra, logística e margem — a base para negociar com fatos.</p></div>
+        </div>
+        <div id="car-e2-perfil"></div>
+        <details class="accordion" style="margin-top:14px;">
+          <summary><span class="label"><span class="tag tag-ilustrativo" style="margin:0;">Exemplo ilustrativo</span> Concentração do mercado de laticínios</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></summary>
+          <div class="accordion-body">
+            <p>Exemplo fictício de como ler a concentração de um mercado — participação de cada fornecedor no volume da região:</p>
+            <table class="kc-table" style="margin:8px 0 12px 0;">
+              <thead><tr><th>Fornecedor</th><th style="width:16%;">Participação</th><th style="width:28%;">Leitura</th></tr></thead>
+              <tbody>
+                <tr><td>Fornecedor A</td><td>31%</td><td>Líder, preço de referência</td></tr>
+                <tr><td>Fornecedor B</td><td>22%</td><td>Alternativa competitiva</td></tr>
+                <tr><td>Fornecedor C</td><td>14%</td><td>Forte em queijos especiais</td></tr>
+                <tr><td>Fornecedor D</td><td>9%</td><td>Regional</td></tr>
+                <tr><td>Mais de 40 pequenos</td><td>24%</td><td>Nichos e artesanais</td></tr>
+              </tbody>
+            </table>
+            <p>Com os três maiores somando 67%, o poder de barganha do comprador é menor: o ganho tende a vir mais de custo total, mix e parceria do que de leilão de preço.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Conversas com fornecedores</div>
+        <p class="section-sub">Ouvir o mercado antes da cotação melhora a qualidade das propostas</p>
+        <div class="grid-3">
+          <div class="concept-card"><h5>Operação</h5><ul><li>Capacidade e estrutura</li><li>Planos de expansão</li></ul></div>
+          <div class="concept-card"><h5>Produto</h5><ul><li>Alternativas de especificação</li><li>Lançamentos e substitutos</li></ul></div>
+          <div class="concept-card"><h5>Atendimento</h5><ul><li>Previsibilidade de pedidos</li><li>Entrega, embalagem e estoque</li></ul></div>
+          <div class="concept-card"><h5>Mercado</h5><ul><li>Tendências de preço</li><li>Safra e sazonalidade</li></ul></div>
+          <div class="concept-card"><h5>Dificuldades</h5><ul><li>Matéria-prima e capacidade</li><li>Exigências que encarecem o serviço</li></ul></div>
+          <div class="concept-card"><h5>Ideias</h5><ul><li>O que o grupo pode mudar</li><li>O que o fornecedor pode oferecer</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 3 ===== -->
+    <div class="step-pane" id="pane-e3">
+      <div class="section-title">Etapa 3 — Calcular o Custo Total</div>
+      <p class="section-sub">Sair do preço da nota e olhar o custo de todo o ciclo do item</p>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Custo total de propriedade (TCO)</div>
+        <p class="section-sub">O que pesa no custo além do preço de compra</p>
+        <div class="concept-card">
+          <p>O custo de um quilo de proteína servido não é só o preço pago ao fornecedor: somam-se <b>frete e impostos</b>, <b>armazenagem refrigerada</b>, <b>mão de obra de porcionamento</b> e as <b>perdas</b> (aparas, validade, quebra). Comparar fornecedores pelo custo total evita trocar um preço menor por mais perda ou mais trabalho na cozinha — e mostra onde está a maior oportunidade de redução.</p>
+        </div>
+        <div id="car-e3-tco"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Ciclo de vida do item</div>
+        <p class="section-sub">Um roteiro para não esquecer nenhum componente do custo</p>
+        <div class="grid-3">
+          <div class="concept-card"><h5>01 · Especificação</h5><ul><li>Definição do item</li><li>Previsão de consumo</li></ul></div>
+          <div class="concept-card"><h5>02 · Seleção</h5><ul><li>Busca e homologação de fornecedores</li><li>Testes e visitas técnicas</li></ul></div>
+          <div class="concept-card"><h5>03 · Preço</h5><ul><li>Preço pago na unidade de referência</li></ul></div>
+          <div class="concept-card"><h5>04 · Compra</h5><ul><li>Cotação e negociação</li><li>Pedido, conferência e pagamento</li></ul></div>
+          <div class="concept-card"><h5>05 · Transporte</h5><ul><li>Frete até a central ou a casa</li><li>Janela de entrega</li></ul></div>
+          <div class="concept-card"><h5>06 · Armazenagem</h5><ul><li>Câmara fria e estoque seco</li><li>Giro e validade</li></ul></div>
+          <div class="concept-card"><h5>07 · Qualidade</h5><ul><li>Inspeção no recebimento</li><li>Devoluções</li></ul></div>
+          <div class="concept-card"><h5>08 · Preparo</h5><ul><li>Porcionamento e pré-preparo</li><li>Rendimento da receita</li></ul></div>
+          <div class="concept-card"><h5>09 · Perdas e descarte</h5><ul><li>Sobras e vencimento</li><li>Descarte de óleo e embalagens</li></ul></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 4 ===== -->
+    <div class="step-pane" id="pane-e4">
+      <div class="section-title">Etapa 4 — Escolher o Modelo de Fornecimento</div>
+      <p class="section-sub">Posicionar a categoria e decidir como comprá-la</p>
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Matriz de posicionamento</div>
+        <p class="section-sub">Impacto no gasto × risco de fornecimento</p>
+        <div class="grid-2">
+          <div class="concept-card"><h5>Alavancagem</h5><p>Muito gasto e muitos fornecedores (ex.: mercearia seca). Concorrência aberta e consolidação de volume.</p></div>
+          <div class="concept-card"><h5>Estratégicos</h5><p>Muito gasto e poucas alternativas (ex.: cortes bovinos premium). Parceria, contratos longos e planejamento conjunto.</p></div>
+          <div class="concept-card"><h5>Não críticos</h5><p>Pouco gasto e oferta ampla (ex.: descartáveis simples). Catálogo, pedidos automáticos e menos esforço.</p></div>
+          <div class="concept-card"><h5>Gargalo</h5><p>Pouco gasto, mas difícil de substituir (ex.: um queijo específico do cardápio). Garantir estoque e desenvolver alternativas.</p></div>
+        </div>
+        <div id="car-e4-matriz"></div>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 5 ===== -->
+    <div class="step-pane" id="pane-e5">
+      <div class="section-title">Etapa 5 — Analisar Fornecedores</div>
+      <p class="section-sub">Filtrar a lista longa até chegar a poucos fornecedores qualificados</p>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Do funil à lista curta</div>
+        <span class="tag tag-conceitual">Conceitual</span>
+        <div class="grid-3" style="margin-top:10px;">
+          <div class="concept-card"><h5>Entrada</h5><p>Todos os fornecedores que poderiam atender a categoria (lista longa).</p></div>
+          <div class="concept-card"><h5>O que avaliar</h5><ul><li>Capacidade técnica e sanitária</li><li>Saúde financeira e porte</li><li>Interesse real na oportunidade</li></ul></div>
+          <div class="concept-card"><h5>Saída</h5><p>Fornecedores aptos a receber a cotação (lista curta).</p></div>
+        </div>
+        <p class="section-sub" style="margin-top:10px;">Lista longa → <b>RFI</b> (pedido de informações) → Lista curta</p>
+        <div id="car-e5-funil"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">O que perguntar na RFI</div>
+        <p class="section-sub">Informações técnicas e de negócio, pedidas antes de falar de preço</p>
+        <div class="grid-3">
+          <div class="concept-card"><h5>Empresa</h5><p>Dados cadastrais, tempo de mercado, regiões atendidas.</p></div>
+          <div class="concept-card"><h5>Finanças</h5><p>Faturamento, certidões e situação fiscal.</p></div>
+          <div class="concept-card"><h5>Qualidade</h5><p>Licenças sanitárias, certificações, rastreabilidade e controle de temperatura.</p></div>
+          <div class="concept-card"><h5>Operação</h5><p>Capacidade, frota, centros de distribuição, frequência de entrega.</p></div>
+          <div class="concept-card"><h5>Clientes</h5><p>Principais clientes do setor de food service e referências.</p></div>
+          <div class="concept-card"><h5>Custos</h5><p>Principais insumos e como eles afetam o preço ao longo do ano.</p></div>
+        </div>
+      </div>
+
+      <details class="accordion">
+        <summary><span class="label"><span class="tag tag-ilustrativo" style="margin:0;">Exemplo ilustrativo</span> Critérios e pesos para a lista curta</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></summary>
+        <div class="accordion-body">
+          <p>Os pesos mudam conforme a categoria. Um exemplo fictício para Embalagens: <b>qualidade e conformidade</b> (30%), <b>capacidade de entrega</b> (25%), <b>saúde financeira</b> (20%), <b>cobertura regional</b> (15%) e <b>sustentabilidade do material</b> (10%) — cada critério recebe nota de 0 a 3, e a soma ponderada ordena os fornecedores.</p>
+          <p>No exemplo, 42 fornecedores mapeados viraram 27 respostas à RFI, 15 aprovados tecnicamente, 9 com saúde financeira e capacidade adequadas e 5 convidados para a cotação.</p>
+        </div>
+      </details>
+    </div>
+
+    <!-- ===== ETAPA 6 ===== -->
+    <div class="step-pane" id="pane-e6">
+      <div class="section-title">Etapa 6 — Conduzir a Cotação</div>
+      <p class="section-sub">Montar a RFP (pedido de proposta) e comparar as respostas em bases iguais</p>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">O que vai na RFP</div>
+        <p class="section-sub">Pedir as informações certas permite simular cenários depois</p>
+        <div class="grid-3">
+          <div class="concept-card"><h5>Escopo</h5><p>Itens, especificações, casas atendidas e volumes estimados.</p></div>
+          <div class="concept-card"><h5>Preços</h5><p>Preço por unidade de referência e por faixa de volume.</p></div>
+          <div class="concept-card"><h5>Alternativas</h5><p>Itens substitutos e propostas de melhoria do fornecedor.</p></div>
+          <div class="concept-card"><h5>Condições</h5><p>Prazo de pagamento, frequência de entrega, pedido mínimo.</p></div>
+          <div class="concept-card"><h5>Reajuste</h5><p>Fórmula de reajuste ligada a um índice de mercado da categoria.</p></div>
+        </div>
+      </div>
+
+      <details class="accordion">
+        <summary><span class="label"><span class="tag tag-ilustrativo" style="margin:0;">Exemplo ilustrativo</span> Equalização das propostas</span><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></summary>
+        <div class="accordion-body">
+          <p><b>Adesão:</b> a quantidade de respostas já diz algo sobre o interesse do mercado. No exemplo, 5 fornecedores convidados e 5 propostas recebidas.</p>
+          <p><b>Equalização:</b> cada proposta é comparada à baseline (o custo atual do mesmo escopo). Variações de −9% a +11% são esperadas; uma proposta 58% abaixo indica que o fornecedor entendeu o escopo de outra forma e precisa ser esclarecida antes da comparação final.</p>
+          <p><b>Cenários:</b> depois de equalizar, compare cenários — por exemplo, um fornecedor por região contra um único fornecedor nacional — somando preço, frete e custo de gestão de cada opção.</p>
+        </div>
+      </details>
+      <div id="car-e6-indice"></div>
+    </div>
+
+    <!-- ===== ETAPA 7 ===== -->
+    <div class="step-pane" id="pane-e7">
+      <div class="section-title">Etapa 7 — Negociar</div>
+      <p class="section-sub">Planejamento, estilo e técnicas para fechar bons acordos</p>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Roteiro da negociação</div>
+        <p class="section-sub">Sequência recomendada, da análise das propostas à decisão</p>
+        <div class="mini-flow">
+          <div class="step">Resumir as propostas</div><span class="arrow">→</span>
+          <div class="step">Avaliar nosso poder de barganha</div><span class="arrow">→</span>
+          <div class="step">Definir objetivos e limites</div><span class="arrow">→</span>
+          <div class="step">Dividir papéis no time</div><span class="arrow">→</span>
+          <div class="step">Preparar argumentos e dados</div><span class="arrow">→</span>
+          <div class="step">Alinhar com as áreas usuárias</div><span class="arrow">→</span>
+          <div class="step">Negociar</div><span class="arrow">→</span>
+          <div class="step">Decidir e comunicar</div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Dois estilos de negociação</div>
+        <div class="grid-2">
+          <div class="compare-card">
+            <h5>Posicional</h5>
+            <div class="compare-col"><div class="compare-label" style="color:var(--accent-dark);">Prós</div><ul><li>Simples e rápida</li><li>Exige pouca preparação</li></ul></div>
+            <div class="compare-col"><div class="compare-label" style="color:var(--red);">Contras</div><ul><li>Desgasta o relacionamento</li><li>Ignora interesses e alternativas</li><li>Trava em negociações complexas</li></ul></div>
+          </div>
+          <div class="compare-card">
+            <h5>Baseada em fatos</h5>
+            <div class="compare-col"><div class="compare-label" style="color:var(--accent-dark);">Prós</div><ul><li>Ganhos para os dois lados</li><li>Firmeza com flexibilidade</li><li>Relação e resultado duradouros</li></ul></div>
+            <div class="compare-col"><div class="compare-label" style="color:var(--red);">Contras</div><ul><li>Exige dados e preparo</li><li>Leva mais tempo</li></ul></div>
+          </div>
+        </div>
+        <div id="car-e7-estilos"></div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Boas práticas</div>
+        <table class="kc-table">
+          <thead><tr><th style="width:14%;">Foco</th><th style="width:28%;">Prática</th><th>Como aplicar</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="2"><b>Pessoas</b></td><td>Separe pessoas do problema</td><td>Mantenha o tom profissional · Trate objeções como informação</td></tr>
+            <tr><td>Entenda o outro lado</td><td>Pergunte mais do que afirma · Descubra o que o fornecedor valoriza (volume, prazo, previsibilidade)</td></tr>
+            <tr><td rowspan="3"><b>Problema</b></td><td>Foque em interesses</td><td>Discuta o que cada lado precisa, não posições fechadas</td></tr>
+            <tr><td>Crie opções</td><td>Troque o que custa pouco para um lado e vale muito para o outro (ex.: janela de entrega por preço)</td></tr>
+            <tr><td>Use critérios objetivos</td><td>Índices de mercado, histórico de preço, custo total e propostas equalizadas</td></tr>
+            <tr><td rowspan="2"><b>Acordo</b></td><td>Conheça sua alternativa</td><td>Saiba o que fará se não houver acordo e quanto isso custa</td></tr>
+            <tr><td>Feche por escrito</td><td>Registre preço, reajuste, nível de serviço e penalidades acordadas</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Planejamento: quem, quando, onde e como</div>
+        <p class="section-sub">Quatro decisões antes de marcar a reunião</p>
+        <div class="grid-4">
+          <div class="concept-card"><h5>Quem</h5><p>Quem participa de cada lado e quem decide.</p></div>
+          <div class="concept-card"><h5>Quando</h5><p>O melhor momento (safra, fim de contrato, fechamento do mês).</p></div>
+          <div class="concept-card"><h5>Onde</h5><p>Presencial, na casa, na central ou on-line.</p></div>
+          <div class="concept-card"><h5>Como</h5><p>Agenda, ordem dos temas e materiais de apoio.</p></div>
+        </div>
+        <div class="callout amber" style="margin-top:14px;">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div><strong>Dica</strong><p>Faça um ensaio rápido com o time antes da reunião e leve os números do portal impressos ou abertos: preço por unidade de referência, histórico e OTIF do fornecedor.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ETAPA 8 ===== -->
+    <div class="step-pane" id="pane-e8">
+      <div class="section-title">Etapa 8 — Implementar e Monitorar Acordos</div>
+      <p class="section-sub">Garantir que o negociado aconteça na prática</p>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">IPF — Índice de Performance do Fornecedor</div>
+        <p class="section-sub">Três indicadores acordados no contrato e acompanhados todo mês</p>
+        <div class="grid-3">
+          <div class="gauge-card">
+            <h5>Qualidade dos itens</h5>
+            <div class="row"><span>Meta</span><b>&ge; 98%</b></div>
+            <div class="row"><span>Medição</span><b>Recebimentos aprovados</b></div>
+            <div class="row"><span>Frequência</span><b>Mensal</b></div>
+            <div class="row"><span>Leitura do mês</span><b style="color:var(--accent-dark);">99,1%</b></div>
+          </div>
+          <div class="gauge-card">
+            <h5>OTIF</h5>
+            <div class="row"><span>Meta</span><b>&ge; 95%</b></div>
+            <div class="row"><span>Medição</span><b>Pedidos no prazo e completos</b></div>
+            <div class="row"><span>Frequência</span><b>Mensal</b></div>
+            <div class="row"><span>Leitura do mês</span><b style="color:var(--red);">91,4% (abaixo da meta)</b></div>
+          </div>
+          <div class="gauge-card">
+            <h5>Atendimento</h5>
+            <div class="row"><span>Meta</span><b>&ge; 95%</b></div>
+            <div class="row"><span>Medição</span><b>Chamados resolvidos no prazo</b></div>
+            <div class="row"><span>Frequência</span><b>Mensal</b></div>
+            <div class="row"><span>Leitura do mês</span><b style="color:var(--accent-dark);">96,8%</b></div>
+          </div>
+        </div>
+        <p class="section-sub" style="margin-top:10px;"><b>OTIF</b> = "On Time, In Full": pedidos entregues no prazo e completos. O desempenho real de cada fornecedor está na aba OTIF da página de Fornecedores. As leituras acima são fictícias.</p>
+
+        <div id="car-e8-ipf"></div>
+
+        <div class="grid-2" style="margin-top:14px;">
+          <div class="concept-card"><h5>Gestão do contrato</h5><ul><li>Indicadores alinhados ao <b>uso real do item</b> nas casas</li><li>Reuniões periódicas de resultado com o fornecedor</li><li>Plano de ação quando um indicador fica abaixo da meta</li></ul></div>
+          <div class="concept-card"><h5>Incentivos</h5><p>Bônus ou penalidades ligados ao IPF estimulam o fornecedor a manter o nível de serviço combinado.</p></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  Conteúdo original escrito para o Grupo Quintaluz Gastronomia, empresa fictícia deste projeto de portfólio. Exemplos e números são ilustrativos.
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Gestão do Conhecimento',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="dashboard.js"></script>
+</body>
+</html>

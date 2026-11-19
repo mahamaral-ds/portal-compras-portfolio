@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supply Chat · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8l.9 2.1L15 11l-2.1.9L12 14l-.9-2.1L9 11l2.1-.9L12 8z"></path><path d="M5 3l.6 1.4L7 5l-1.4.6L5 7l-.6-1.4L3 5l1.4-.6L5 3z"></path><path d="M19 13l.6 1.4L21 15l-1.4.6L19 17l-.6-1.4L17 15l1.4-.6L19 13z"></path></svg>
+        IA · Busca Inteligente
+      </p>
+      <h1 class="brand-title">Supply Chat <span class="wip-badge">Em desenvolvimento</span> <span class="mode-badge" id="modeBadge" hidden></span></h1>
+      <p class="brand-sub" id="brandSub">Pergunte sobre fornecedores, categorias, preços e inflação — sem precisar navegar pelo portal.</p>
+    </div>
+    <button class="btn-nova-conversa" id="btnNovaConversa">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+      Nova conversa
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="chat-shell">
+    <div class="chat-messages" id="chatMessages">
+      <!-- preenchido por chat.js: estado de boas-vindas + mensagens -->
+    </div>
+    <form class="chat-composer" id="chatComposer">
+      <textarea class="chat-input" id="chatInput" rows="1" placeholder="Pergunte alguma coisa sobre o portal..." autocomplete="off"></textarea>
+      <button type="submit" class="chat-send-btn" id="chatSendBtn" aria-label="Enviar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+      </button>
+    </form>
+  </div>
+</main>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Supply Chat',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="engine.js"></script>
+<script src="chat.js"></script>
+</body>
+</html>

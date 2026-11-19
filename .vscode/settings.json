@@ -1,0 +1,29 @@
+{
+  // data.js de alguns módulos chega a ~11 MB (gerado por build_data.py) —
+  // format-on-save NÃO é ligado globalmente para JS para evitar que o editor
+  // trave ou reescreva esses arquivos gerados ao abrir/salvar por engano.
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true
+  },
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[markdown]": {
+    "editor.formatOnSave": false
+  },
+  "editor.formatOnSaveMode": "modificationsIfAvailable"
+}

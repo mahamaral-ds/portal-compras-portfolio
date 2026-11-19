@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise de Fornecedores · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+<link rel="stylesheet" href="../../shared/portal-filters.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">Análise de Fornecedores</h1>
+      <p class="brand-sub" id="brandSub">Base consolidada · Jan–Jun 2026</p>
+    </div>
+    <div class="header-meta">
+      Gerado em <strong id="genDate">16/07/2026</strong><br>
+      <span id="genTotal">—</span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-view="visao" class="active">Visão Geral</button>
+    <button data-view="abc">Curva ABC</button>
+    <button data-view="ranking">Ranking de Fornecedores</button>
+    <button data-view="grupo">Análise por Categoria</button>
+    <button data-view="segmento">Fornecedor × Vertical</button>
+    <button data-view="performance">OTIF</button>
+    <button data-view="regionalizacao">Regionalização</button>
+    <button data-view="itens-forn">Itens por Fornecedor</button>
+  </nav>
+  <div class="period-bar" id="periodBar">
+    <span class="period-label">Período:</span>
+    <div class="period-chips" id="periodChips"></div>
+    <span class="period-note" id="periodNote">Ctrl+clique para selecionar vários meses</span>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= VISÃO GERAL ================= -->
+  <section class="view active" id="view-visao">
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="hero">
+      <div class="hero-stat">
+        <div class="big" id="heroBig">15<span>% dos fornecedores</span></div>
+        <div class="desc" id="heroDesc"></div>
+      </div>
+      <div class="hero-chart-card">
+        <div class="chart-title">Distribuição de valor por classe (ABC)</div>
+        <div class="chart-wrap" style="height:190px;">
+          <canvas id="chartClasseDonut"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 visao-top section-block">
+      <div class="card">
+        <div class="section-title">Evolução mensal do total comprado</div>
+        <p class="section-sub">Valor contábil total por mês, jan–jun 2026</p>
+        <div class="chart-wrap">
+          <canvas id="chartMonthlyTotalMini"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Top 10 fornecedores</div>
+        <p class="section-sub">Por valor total de compras no período</p>
+        <div class="table-scroll">
+          <table id="top5Table">
+            <thead><tr><th>#</th><th>Fornecedor</th><th class="num">Valor</th><th class="num">Part.%</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= CURVA ABC ================= -->
+  <section class="view" id="view-abc">
+    <div class="section-block">
+      <div class="section-title">Curva ABC de fornecedores</div>
+      <p class="section-sub" id="abcSectionSub">Participação acumulada no valor total de compras, ordenada por fornecedor</p>
+      <div class="card">
+        <div class="chart-wrap" style="height:360px;">
+          <canvas id="chartABC"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2b section-block">
+      <div class="card" id="abcClassCards"></div>
+      <div class="card">
+        <div class="section-title" style="font-size:13px;">Como ler a curva</div>
+        <p class="section-sub" style="margin-bottom:8px;">
+          A Classe <b style="color:var(--accent-dark)">A</b> concentra o maior valor de compra em poucos fornecedores — são as relações que mais merecem negociação ativa,
+          contratos formais e acompanhamento de preço. A Classe <b style="color:#8A5A20">B</b> tem peso intermediário, e a Classe <b style="color:#5B6472">C</b> reúne
+          a cauda longa de fornecedores de baixo valor individual, candidatos naturais à consolidação ou revisão de necessidade.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RANKING ================= -->
+  <section class="view" id="view-ranking">
+
+    <!-- filtros no padrao da Tabela Detalhada (Analise de Itens); a base de itens e' carregada ao abrir esta aba -->
+    <div class="section-block" id="rkFiltros">
+      <div class="section-title">Filtros</div>
+      <p class="section-sub">Os mesmos filtros da Tabela Detalhada (Análise de Itens): o ranking, a distribuição do PMP e o resumo se recalculam com o resultado filtrado. Nesta aba o filtro de período do topo não é usado: o recorte de datas é a Data de lançamento.</p>
+      <div class="card">
+        <div class="rk-panel">
+          <div class="filter-field">
+            <label id="rkDataLabel">Data de lançamento</label>
+            <div class="dd-filter" id="rkData"></div>
+          </div>
+          <div class="filter-field">
+            <label id="rkCasaLabel">Casa</label>
+            <div class="dd-filter" id="rkCasa"></div>
+          </div>
+          <div class="filter-field">
+            <label id="rkGrupoLabel">Grupo</label>
+            <div class="dd-filter" id="rkGrupo"></div>
+          </div>
+          <div class="filter-field">
+            <label id="rkSegmentoLabel">Segmento</label>
+            <div class="dd-filter" id="rkSegmento"></div>
+          </div>
+          <div class="filter-field" id="rkSegRegField">
+            <label id="rkSegRegLabel">Segmento × Região</label>
+            <div class="dd-filter" id="rkSegReg"></div>
+          </div>
+          <div class="filter-field">
+            <label for="rkForn">Fornecedor</label>
+            <input type="text" id="rkForn" placeholder="Buscar fornecedor..." disabled>
+          </div>
+          <div class="filter-field">
+            <label for="rkItem">Descrição do item</label>
+            <input type="text" id="rkItem" placeholder="Buscar item..." disabled>
+          </div>
+          <div class="filter-field">
+            <label for="rkDescForn">Descrição item fornecedor</label>
+            <input type="text" id="rkDescForn" placeholder="Buscar descrição do fornecedor..." disabled>
+          </div>
+        </div>
+        <div class="rk-toolbar">
+          <span class="rk-status" id="rkStatus">Os filtros são carregados ao abrir esta aba…</span>
+          <button class="filter-clear" id="rkLimpar" type="button" disabled>Limpar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Distribuição do PMP de fornecedores</div>
+      <p class="section-sub" id="pmpDistSub">Quantidade de fornecedores por faixa de prazo médio de pagamento (dias) · respeita os filtros acima e a classe abaixo · clique em uma barra para ver a lista de fornecedores daquela faixa</p>
+      <div class="card">
+        <div class="chart-wrap" style="height:260px;">
+          <canvas id="chartPmpDist"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title" id="rankingTitle">Ranking de fornecedores — Base completa</div>
+    <p class="section-sub">Clique nos cabeçalhos para ordenar. Use os filtros acima, as classes ou clique em uma barra do gráfico de PMP para refinar.</p>
+    <div class="card">
+      <div class="table-toolbar">
+        <div class="filter-chips" id="rankFilters">
+          <div class="chip active" data-classe="ALL">Todas</div>
+          <div class="chip" data-classe="A">Classe A</div>
+          <div class="chip" data-classe="B">Classe B</div>
+          <div class="chip" data-classe="C">Classe C</div>
+        </div>
+        <button type="button" class="pmp-faixa-tag" id="pmpFaixaTag" hidden title="Remover o filtro de faixa de PMP"></button>
+        <span id="rankResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
+      </div>
+      <div class="table-scroll">
+        <table id="rankingTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GRUPO ================= -->
+  <section class="view" id="view-grupo">
+    <div class="section-title">Distribuição por categoria</div>
+    <p class="section-sub">Valor total comprado por categoria de produto, com fornecedor principal de cada categoria</p>
+    <div class="grid-2 grupo-top section-block">
+      <div class="card">
+        <div class="chart-wrap">
+          <canvas id="chartGrupo"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-scroll">
+          <table id="grupoTable">
+            <thead><tr><th>Categoria</th><th class="num">Valor</th><th class="num">Part.%</th><th>Principal Forn.</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SEGMENTO ================= -->
+  <section class="view" id="view-segmento">
+    <div class="section-title">Compras por fornecedor × vertical (unidade)</div>
+    <p class="section-sub">Top 20 fornecedores por valor total (no período selecionado), distribuídos entre as unidades/verticais de consumo</p>
+    <div class="card">
+      <div class="heatmap-scroll">
+        <table class="heatmap" id="heatmapTable"></table>
+      </div>
+      <div class="legend-scale">
+        <span>Menor valor</span><div class="legend-swatch"></div><span>Maior valor</span>
+      </div>
+    </div>
+
+    <div class="section-block" style="margin-top:20px;">
+      <div class="section-title">Total comprado por vertical</div>
+      <div class="card">
+        <div class="chart-wrap" style="height:220px;">
+          <canvas id="chartSegmentoTotal"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PERFORMANCE DE COMPRAS (OTIF) ================= -->
+  <section class="view" id="view-performance">
+
+    <p class="section-sub" id="perfGenInfo" style="margin:-4px 0 14px 0;"></p>
+
+    <div class="kpi-grid kpi-grid-4" id="perfKpiGrid"></div>
+    <div class="kpi-grid kpi-grid-3" id="perfKpiGrid2" style="margin-top:-6px;"></div>
+
+    <div class="section-block">
+      <div class="section-title">Evolução mensal do OTIF</div>
+      <p class="section-sub">ON TIME, IN FULL e OTIF mês a mês, com média móvel de 3 meses e meta de referência · esta série sempre mostra o período completo, independente do filtro acima</p>
+      <div class="card">
+        <div class="chart-wrap" style="height:280px;">
+          <canvas id="perfChartEvolucaoOtif"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Melhores fornecedores (OTIF)</div>
+        <p class="section-sub">Mínimo de 5 pedidos no período selecionado</p>
+        <div class="table-scroll">
+          <table id="perfTableMelhores">
+            <thead><tr><th>Fornecedor</th><th class="num">Pedidos</th><th class="num">OTIF</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Piores fornecedores (OTIF)</div>
+        <p class="section-sub">Mínimo de 5 pedidos no período selecionado</p>
+        <div class="table-scroll">
+          <table id="perfTablePiores">
+            <thead><tr><th>Fornecedor</th><th class="num">Pedidos</th><th class="num">OTIF</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Causas das não conformidades (Pareto)</div>
+      <p class="section-sub">Distribuição das ocorrências por causa raiz, com percentual acumulado · base completa</p>
+      <div class="card">
+        <div class="chart-wrap" style="height:300px;">
+          <canvas id="perfChartPareto"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-divider"><span>Detalhamentos</span></div>
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Fornecedores mais recorrentes em atraso</div>
+        <p class="section-sub">Contagem de pedidos, período selecionado</p>
+        <div class="chart-wrap" style="height:280px;">
+          <canvas id="perfChartAtrasos"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Fornecedores com mais entregas incompletas</div>
+        <p class="section-sub">Contagem de pedidos, período selecionado</p>
+        <div class="chart-wrap" style="height:280px;">
+          <canvas id="perfChartIncompletos"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Fornecedores em piora</div>
+        <p class="section-sub">Queda de OTIF entre a 1ª e a 2ª metade do período · base completa</p>
+        <div class="table-scroll">
+          <table id="perfTablePiorando">
+            <thead><tr><th>Fornecedor</th><th class="num">1ª metade</th><th class="num">2ª metade</th><th class="num">Variação</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Fornecedores em melhora</div>
+        <p class="section-sub">Ganho de OTIF entre a 1ª e a 2ª metade do período · base completa</p>
+        <div class="table-scroll">
+          <table id="perfTableMelhorando">
+            <thead><tr><th>Fornecedor</th><th class="num">1ª metade</th><th class="num">2ª metade</th><th class="num">Variação</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Desempenho por comprador</div>
+      <p class="section-sub">Compradores com pelo menos 5 pedidos no período selecionado</p>
+      <div class="card">
+        <div class="table-scroll" style="max-height:320px;overflow-y:auto;">
+          <table id="perfTableComprador">
+            <thead><tr><th>Comprador</th><th class="num">Pedidos</th><th class="num">OTIF</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-sub" style="margin-top:4px;">Indicadores de OTIF calculados a partir da base de pedidos e entregas. Metodologia: OTIF = ON TIME × IN FULL.</p>
+
+  </section>
+
+  <!-- ================= REGIONALIZAÇÃO ================= -->
+  <section class="view" id="view-regionalizacao">
+    <div class="section-title">Regionalização de Fornecedores</div>
+    <p class="section-sub">Estado (UF) real de cada fornecedor, a partir do complemento de cadastro (<code>complemento_fornecedores.xlsx</code>) — não é mais um proxy pela região da casa que compra. Fornecedores cujo nome não tem correspondência confiável nessa base (ausente, ou com filiais em estados diferentes que impedem saber qual delas vendeu para o grupo) aparecem à parte, em "Não informado".</p>
+    <div class="info-note" id="regioCoverageNote"></div>
+
+    <div class="kpi-grid" id="regioKpiGrid" style="grid-template-columns:repeat(4,1fr);margin-top:16px;"></div>
+
+    <div class="section-block">
+      <div class="section-title" style="font-size:14px;">Comparação entre macro-regiões</div>
+      <p class="section-sub">Quantidade de fornecedores, ticket médio por fornecedor e peso da cauda longa (Classe C) em cada macro-região do IBGE — "Não informado" agrupa fornecedores sem UF confiável</p>
+      <div class="card">
+        <div class="table-scroll">
+          <table id="regioCompareTable">
+            <thead><tr><th>Região</th><th class="num">Fornecedores</th><th class="num">Valor Total</th><th class="num">Part.%</th><th class="num">Ticket Médio / Forn.</th><th class="num">Cauda longa (Classe C)</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Fornecedores por macro-região</div>
+        <p class="section-sub">Quantidade de fornecedores distintos com UF identificado em cada macro-região</p>
+        <div class="chart-wrap" style="height:250px;">
+          <canvas id="chartRegioCount"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Ticket médio por fornecedor</div>
+        <p class="section-sub">Valor total da macro-região ÷ número de fornecedores — quanto menor, mais pulverizada a base</p>
+        <div class="chart-wrap" style="height:250px;">
+          <canvas id="chartRegioTicket"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title" style="font-size:14px;">Curva ABC de fornecedores por macro-região</div>
+      <p class="section-sub">Curva calculada de forma independente para cada macro-região — rank e classe são específicos dela, não um recorte da curva ABC geral</p>
+      <div class="card">
+        <div class="chart-wrap" style="height:300px;">
+          <canvas id="chartRegioABC"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title" style="font-size:14px;">Ranking de fornecedores por estado (UF)</div>
+      <p class="section-sub">Clique nos cabeçalhos para ordenar · granularidade por estado — todos os estados presentes no complemento de fornecedores, sem se limitar a uma lista fixa</p>
+      <div class="card">
+        <div class="table-toolbar">
+          <input type="text" class="search-input" id="regioRankSearch" placeholder="Buscar fornecedor...">
+          <div class="filter-chips" id="regioFilters"></div>
+          <span id="regioRankCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
+        </div>
+        <div class="table-scroll">
+          <table id="regioRankingTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title" style="font-size:14px;">Conclusão analítica</div>
+      <p class="section-sub">Leitura automática da distribuição geográfica real dos fornecedores</p>
+      <div class="insight-list" id="regioInsights"></div>
+    </div>
+  </section>
+
+  <!-- ================= ITENS POR FORNECEDOR ================= -->
+  <section class="view" id="view-itens-forn">
+    <div class="section-title">Itens por Fornecedor</div>
+    <p class="section-sub">O que compramos dos principais fornecedores, a que preço, e onde há dinheiro a recuperar — com concentração, tendência de preço, alternativa de fornecimento e saving potencial.</p>
+    <div class="if-scope-note" id="ifScopeNote"></div>
+
+    <!-- filtros proprios desta aba (independentes do filtro de periodo do topo) -->
+    <div class="filter-bar" id="ifFilterBar">
+      <div class="filter-field">
+        <label id="ifPeriodoLabel">Período</label>
+        <div class="dd-filter" id="ifPeriodo"></div>
+      </div>
+      <div class="filter-field">
+        <label id="ifCasaLabel">Casa/Unidade</label>
+        <div class="dd-filter" id="ifCasa"></div>
+      </div>
+      <div class="filter-field">
+        <label id="ifGrupoLabel">Grupo de item</label>
+        <div class="dd-filter" id="ifGrupo"></div>
+      </div>
+      <div class="filter-field">
+        <label for="ifCriterio">Ranking de fornecedores por</label>
+        <select id="ifCriterio">
+          <option value="valor">Valor comprado</option>
+          <option value="nfs">Nº de NFs</option>
+          <option value="casas">Casas atendidas</option>
+          <option value="itens">Itens distintos</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label for="ifBusca">Buscar fornecedor ou item</label>
+        <input type="text" id="ifBusca" placeholder="Nome, código ou descrição...">
+      </div>
+      <button class="filter-clear" id="ifBtnLimpar" type="button">Limpar filtros</button>
+    </div>
+    <div class="active-filter-note" id="ifActiveFilterNote" hidden></div>
+
+    <div class="kpi-grid" id="ifKpiGrid" style="grid-template-columns:repeat(5,1fr);"></div>
+
+    <!-- Master-detail -->
+    <div class="section-block">
+      <div class="section-title" style="font-size:14px;">Fornecedores × Itens</div>
+      <p class="section-sub">Selecione um fornecedor na lista para ver o detalhe dos itens comprados dele</p>
+      <div class="if-master-detail">
+        <div class="if-master-list card" id="ifFornList"></div>
+        <div class="if-detail-panel card">
+          <div class="if-detail-header" id="ifDetailHeader"></div>
+          <div class="if-coverage-note" id="ifCoverageNote"></div>
+          <div class="table-toolbar" style="margin-top:10px;">
+            <div class="filter-chips" id="ifItemCriterioChips">
+              <div class="chip active" data-crit="valor">Valor</div>
+              <div class="chip" data-crit="qtd">Quantidade</div>
+              <div class="chip" data-crit="freq">Frequência</div>
+              <div class="chip" data-crit="variacao">Variação de preço</div>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table id="ifItemsTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Matriz de multi-sourcing -->
+    <div class="section-block">
+      <div class="section-title" style="font-size:14px;">Matriz de multi-sourcing</div>
+      <p class="section-sub">Item × fornecedor, entre os itens do fornecedor selecionado — onde há alternativa de fornecimento e onde estamos presos a um único fornecedor</p>
+      <div class="card">
+        <div class="heatmap-scroll">
+          <table class="heatmap" id="ifMultiSourceHeatmap"></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela consolidada -->
+    <div class="section-block">
+      <div class="section-title" style="font-size:14px;">Tabela consolidada</div>
+      <p class="section-sub">Todos os pares fornecedor × item do recorte atual (até 500 linhas) · clique nos cabeçalhos para ordenar</p>
+      <div class="card">
+        <div class="table-toolbar">
+          <input type="text" class="search-input" id="ifTblSearch" placeholder="Buscar fornecedor ou item...">
+          <span id="ifTblResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
+          <button class="btn btn-secondary btn-sm" id="ifBtnExportCsv" type="button">Exportar CSV</button>
+        </div>
+        <div class="table-scroll">
+          <table id="ifConsolidatedTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="ifTblPagination"></div>
+      </div>
+    </div>
+
+    <!-- Rodape de metodologia -->
+    <div class="methodology-footer" id="ifMethodologyFooter">
+      <h3>Metodologia e limitações</h3>
+      <ul id="ifMethodologyList"></ul>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Dashboard gerado a partir da base consolidada de compras (jan–ago/2026). Dados sintéticos — empresa fictícia, projeto de portfólio.
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Fornecedores',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="chart.umd.min.js"></script>
+<script src="../../shared/portal-charts.js"></script>
+<script src="../../shared/portal-period-filter.js"></script>
+<script src="../../shared/portal-period-agg.js"></script>
+<script src="../../shared/portal-filters.js"></script>
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+<script src="performance-data.js"></script>
+<script src="performance-dashboard.js"></script>
+</body>
+</html>

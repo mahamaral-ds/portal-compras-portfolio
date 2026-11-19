@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+    <h1 class="brand-title">Compliance</h1>
+    <p class="brand-sub">Conformidade de compras — NF Sequencial disponível</p>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-view="nf-sequencial" class="active">NF Sequencial</button>
+    <button data-view="lista-restrita">Lista Restrita de Fornecedores</button>
+  </nav>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= NF SEQUENCIAL ================= -->
+  <section class="view active" id="view-nf-sequencial">
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="section-block">
+      <div class="section-title">Sequência de NF por fornecedor</div>
+      <p class="section-sub" id="tableSub">Compara a quantidade de NFs emitidas com o intervalo entre a menor e a maior NF do fornecedor · clique nos cabeçalhos para ordenar</p>
+      <div class="card">
+        <div class="table-toolbar">
+          <input type="text" class="search-input" id="nfSearch" placeholder="Buscar fornecedor...">
+          <span id="nfResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
+        </div>
+        <div class="table-scroll">
+          <table id="nfTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= LISTA RESTRITA DE FORNECEDORES ================= -->
+  <section class="view" id="view-lista-restrita">
+    <div class="soon-card">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 8.2-7 9-4-.8-7-4.5-7-9V6l7-3z"></path><path d="M9 12l2 2 4-4"></path></svg>
+      </div>
+      <span class="soon-pill">Em breve</span>
+      <h2>Lista Restrita de Fornecedores em desenvolvimento</h2>
+      <p>Esta aba vai reunir a lista de fornecedores com restrição de compra. Ainda não há dados disponíveis — volte em breve.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Grupo Quintaluz (fictício) — Setor de Compras · dados sintéticos
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Compliance',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

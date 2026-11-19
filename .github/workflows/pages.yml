@@ -1,0 +1,85 @@
+# Publica o Portal (versao de portfolio, dados sinteticos) no GitHub Pages a cada push na branch main.
+#
+# Etapas (se QUALQUER uma falhar, nada e' publicado e o site continua na versao anterior):
+#   1. verifica credenciais e termos sensiveis no codigo e em todo o historico do Git
+#   2. gera os dados sinteticos e reconstroi os data.js de todos os modulos
+#   3. monta a pasta do site (_site/) so com HTML/CSS/JS/imagens/PDF
+#   4. verifica de novo, agora a pasta exata que vai para o ar
+#   5. publica no GitHub Pages
+#
+# Requisitos no repositorio (uma vez so):
+#   - Settings > Pages > Source: "GitHub Actions"
+#   - Settings > Secrets and variables > Actions > secret TERMOS_SENSIVEIS (um termo por linha)
+
+name: Publicar no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # permite rodar na mao pela aba Actions ("Run workflow")
+
+permissions:
+  contents: read            # ler o codigo
+  pages: write              # publicar no Pages
+  id-token: write           # autenticar a publicacao
+
+# Um deploy por vez; um push novo nao interrompe a publicacao que ja esta em andamento
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Verificar e montar o site
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Baixar o codigo (com o historico completo)
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0    # o historico inteiro tambem e' verificado
+
+      - name: Instalar Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+          cache: pip
+
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: "Protecao 1: credenciais e termos sensiveis no repositorio e no historico"
+        env:
+          TERMOS_SENSIVEIS: ${{ secrets.TERMOS_SENSIVEIS }}
+        run: python scripts/verificar_vazamento.py --historico --exigir-termos
+
+      - name: Gerar dados sinteticos e reconstruir os modulos
+        run: python scripts/build_all.py
+
+      - name: Montar a pasta do site
+        run: python scripts/montar_site.py _site
+
+      - name: "Protecao 2: verificar exatamente o que vai ser publicado"
+        env:
+          TERMOS_SENSIVEIS: ${{ secrets.TERMOS_SENSIVEIS }}
+        run: python scripts/verificar_vazamento.py --pasta _site --exigir-termos
+
+      - name: Preparar o GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empacotar o site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    name: Publicar
+    needs: build              # so roda se o build (com as verificacoes) passou
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

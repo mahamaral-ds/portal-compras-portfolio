@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commodities e Insights · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+<link rel="stylesheet" href="../../shared/portal-filters.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">Commodities e Insights</h1>
+      <p class="brand-sub" id="brandSub">Base de dados das commodities de maior relevância, tendências e notícias.</p>
+    </div>
+    <!-- @@PAINEL-INICIO -->
+    <div class="header-meta">
+      Gerado em <strong id="genDate">—</strong><br>
+      <span id="genFontes">—</span>
+    </div>
+    <!-- @@PAINEL-FIM -->
+  </div>
+  <nav class="tabs" id="tabNav">
+    <!-- @@PAINEL-INICIO -->
+    <button data-view="painel" class="active">Painel de Commodities</button>
+    <!-- @@PAINEL-FIM -->
+    <button data-view="noticias">Notícias de Mercado</button>
+  </nav>
+</header>
+
+<main id="mainContent">
+
+  <!-- @@PAINEL-INICIO -->
+  <!-- ================= PAINEL DE COMMODITIES ================= -->
+  <section class="view active" id="view-painel">
+
+    <div class="section-block">
+      <div class="section-title">Filtros</div>
+      <p class="section-sub">Escolha as commodities e o período — sem seleção, valem todas as commodities e todos os meses da base</p>
+      <div class="card">
+        <div class="filter-panel filter-panel-2">
+          <div class="filter-field">
+            <label id="cmCommLabel">Commodity</label>
+            <div class="dd-filter" id="cmComm"></div>
+          </div>
+          <div class="filter-field">
+            <label id="cmPeriodoLabel">Período</label>
+            <div class="dd-filter" id="cmPeriodo"></div>
+          </div>
+        </div>
+        <div class="filter-toolbar" style="margin-bottom:0;">
+          <span class="result-count" id="cmResumo">—</span>
+          <button class="btn-secondary" id="cmClear">Limpar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" id="cmKpis"></div>
+
+    <div class="grid-2b section-block">
+      <div class="card">
+        <div class="section-title">Índice de preço pago pelo grupo</div>
+        <p class="section-sub" id="cmIndiceSub">Base 100 no primeiro mês do período</p>
+        <div class="chart-wrap" style="height:300px;">
+          <canvas id="chartCmIndice"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Dólar PTAX (venda)</div>
+        <p class="section-sub" id="cmPtaxSub">Média mensal</p>
+        <div class="chart-wrap" style="height:300px;">
+          <canvas id="chartCmPtax"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Resumo por commodity</div>
+      <p class="section-sub" id="cmResumoSub">—</p>
+      <div class="card">
+        <div class="table-scroll">
+          <table id="cmTabelaResumo">
+            <thead><tr>
+              <th>Commodity</th><th class="num">Gasto no período</th><th class="num">% do gasto</th>
+              <th class="num">Preço pago (Quintaluz)</th><th class="num">IPCA de referência</th><th class="num">Diferença</th>
+              <th>Referência IPCA</th><th class="num">Cobertura de preço</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Principais itens</div>
+      <p class="section-sub" id="cmItensSub">—</p>
+      <div class="card">
+        <div class="table-scroll">
+          <table id="cmTabelaItens">
+            <thead><tr>
+              <th>Commodity</th><th>Item</th><th class="num">Gasto no período</th>
+              <th class="num">Preço no início</th><th class="num">Preço no fim</th><th class="num">Variação</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="dq-note" id="cmNota"></div>
+    </div>
+
+  </section>
+  <!-- @@PAINEL-FIM -->
+
+  <!-- ================= NOTÍCIAS DE MERCADO ================= -->
+  <section class="view" id="view-noticias">
+
+    <div class="nw-head">
+      <div>
+        <div class="section-title">Notícias de Mercado</div>
+        <p class="section-sub">Curadoria de preços, safras, clima, câmbio, juros, tarifas e custos que podem afetar as categorias de compra.</p>
+      </div>
+      <div class="nw-fresh" id="newsFresh">
+        <span class="nw-fresh-label">Atualizado em</span>
+        <strong id="newsUpdatedAt">—</strong>
+        <span class="nw-fresh-ago" id="newsFreshAgo"></span>
+      </div>
+    </div>
+
+    <!-- Radar de impacto: resume (e filtra) as notícias por direção de preço -->
+    <div class="nw-radar" id="newsRadar" role="group" aria-label="Filtrar por impacto esperado nos preços"></div>
+
+    <div class="nw-controls">
+      <div class="nw-search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+        <input type="search" id="newsSearch" placeholder="Buscar por título, tema, fonte ou resumo..." aria-label="Buscar notícias" autocomplete="off">
+      </div>
+      <label class="nw-select">
+        <span>Publicadas</span>
+        <select id="newsJanela" aria-label="Janela de publicação">
+          <option value="ALL">em qualquer data</option>
+          <option value="7">nos últimos 7 dias</option>
+          <option value="30">nos últimos 30 dias</option>
+        </select>
+      </label>
+      <button type="button" class="nw-clear" id="newsClear" hidden>Limpar filtros</button>
+      <span class="nw-count" id="newsResultCount" aria-live="polite"></span>
+    </div>
+    <div class="filter-chips nw-temas" id="newsTemaFilters" role="group" aria-label="Filtrar por tema"></div>
+
+    <!-- Estados: carregando / vazio / sem resultados / erro -->
+    <div class="nw-state" id="newsState" role="status" aria-live="polite">
+      <div class="nw-skeleton" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p>Carregando notícias…</p>
+    </div>
+
+    <!-- Layout editorial (padrão, sem filtros ativos) -->
+    <div id="newsEditorial" hidden>
+      <div class="nw-hero" id="newsHero"></div>
+      <div id="newsSections"></div>
+    </div>
+
+    <!-- Resultados de busca/filtro (lista achatada) -->
+    <div class="nw-grid" id="newsGrid" hidden></div>
+  </section>
+
+</main>
+
+<footer>
+  Gasto e preço pago vêm das notas fiscais sintéticas do Grupo Quintaluz (fictício); IPCA e dólar também são séries sintéticas. Notícias fictícias, escritas para a demonstração. Todos os dados são sintéticos.
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Commodities e Insights',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<!-- @@PAINEL-INICIO -->
+<script src="chart.umd.min.js"></script>
+<script src="../../shared/portal-filters.js"></script>
+<script src="data.js"></script>
+<!-- @@PAINEL-FIM -->
+<script src="news-data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

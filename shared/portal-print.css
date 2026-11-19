@@ -1,0 +1,42 @@
+/* ===================== Higiene geral de impressao (Ctrl+P do navegador) ===================== */
+/* O portal nao oferece mais um botao dedicado de "Exportar PDF" — estas regras
+   so entram em acao se o usuario imprimir manualmente (Ctrl+P), garantindo que
+   controles interativos nao apareçam impressos. */
+
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+@media print{
+  /* Esconde navegacao, filtros e controles interativos — nao fazem sentido no papel */
+  .portal-topbar,
+  header nav.tabs,
+  .period-bar,
+  .table-toolbar,
+  .search-input,
+  .item-picker,
+  .toggle-group,
+  #tabNav {
+    display:none !important;
+  }
+
+  body{ background:#fff !important; }
+  main{ max-width:100% !important; padding:0 12px !important; }
+  header{ position:static !important; box-shadow:none !important; }
+
+  /* Garante que so a aba ativa seja impressa (o resto ja fica display:none via JS) */
+  .view:not(.active){ display:none !important; }
+
+  /* Evita cortar cards/graficos no meio entre paginas */
+  .card, .kpi-card, .section-block, .insight-card, table{
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow:none !important;
+  }
+
+  a[href]::after{ content:none !important; }
+
+  canvas{ max-width:100% !important; }
+}

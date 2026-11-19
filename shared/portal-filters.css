@@ -1,0 +1,100 @@
+/* Filtros compartilhados (lista suspensa com checkboxes + calendario de periodo).
+   Par de shared/portal-filters.js. Usa os tokens do tema (--border, --text, --brand...). */
+/* ---------- Filtro suspenso com checkboxes ---------- */
+.dd-filter{position:relative;}
+.dd-field{position:relative;}
+.dd-trigger{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:8px 34px 8px 10px;
+  border:1px solid var(--border);border-radius:8px;
+  background:#fff;color:var(--text);
+  font-family:var(--sans);font-size:12.5px;text-align:left;cursor:pointer;
+}
+.dd-trigger:hover{border-color:var(--text-faint);}
+.dd-filter.open .dd-trigger{border-color:var(--brand,var(--accent));}
+.dd-summary{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dd-filter.has-selection .dd-summary{font-weight:600;}
+.dd-caret{
+  position:absolute;right:10px;top:50%;width:12px;height:12px;margin-top:-6px;
+  stroke:var(--text-soft);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  pointer-events:none;transition:transform .15s ease;
+}
+.dd-filter.open .dd-caret{transform:rotate(180deg);}
+.dd-x{
+  position:absolute;right:28px;top:50%;transform:translateY(-50%);
+  width:20px;height:20px;border:0;border-radius:50%;background:transparent;
+  color:var(--text-soft);font-size:15px;line-height:1;cursor:pointer;padding:0;
+}
+.dd-x:hover{background:var(--slate-soft);color:var(--text);}
+.dd-x[hidden]{display:none;}
+
+.dd-panel{
+  position:absolute;z-index:40;top:calc(100% + 4px);left:0;
+  width:100%;min-width:260px;
+  background:#fff;border:1px solid var(--border);border-radius:10px;
+  box-shadow:0 12px 32px -12px rgba(18,26,43,.28);
+  padding:8px;display:flex;flex-direction:column;gap:6px;
+}
+.dd-panel[hidden]{display:none;}
+.dd-filter.align-right .dd-panel{left:auto;right:0;}
+.dd-search{
+  width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:8px;
+  font-family:var(--sans);font-size:12.5px;color:var(--text);background:#fff;
+}
+.dd-item{
+  display:flex;align-items:center;gap:9px;padding:6px 8px;border-radius:6px;
+  font-size:12.5px;color:var(--text);cursor:pointer;user-select:none;
+}
+.dd-item:hover{background:var(--slate-soft);}
+.filter-field .dd-item{
+  /* anula o estilo de rotulo de campo (.filter-field label: caixa alta, display:block) */
+  display:flex;margin:0;text-transform:none;letter-spacing:0;font-size:12.5px;font-weight:400;color:var(--text);
+}
+.filter-field .dd-item.dd-all{font-weight:700;}
+.dd-item[hidden],.filter-field .dd-item[hidden]{display:none !important;}
+.dd-item input{width:15px;height:15px;margin:0;accent-color:var(--brand,var(--accent));flex-shrink:0;cursor:pointer;}
+.dd-item span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dd-all{font-weight:700;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;padding-bottom:8px;}
+.dd-list{max-height:240px;overflow-y:auto;}
+.dd-empty{padding:12px 8px;font-size:12px;color:var(--text-faint);text-align:center;}
+.dd-foot{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  border-top:1px solid var(--border);padding-top:7px;font-size:11.5px;color:var(--text-soft);
+}
+.dd-reset{
+  border:0;background:transparent;color:var(--brand-deep,var(--accent-dark));
+  font-family:var(--sans);font-size:11.5px;font-weight:700;cursor:pointer;padding:3px 4px;
+}
+.dd-reset:hover{text-decoration:underline;}
+.dd-reset:disabled{color:var(--text-faint);cursor:default;text-decoration:none;}
+
+/* ---------- Calendario de periodo (Data de lancamento) ---------- */
+.dd-cal-icon{fill:none;}
+.cal-panel{min-width:296px;}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 2px 4px;}
+.cal-title{font-size:13px;font-weight:700;color:var(--text);}
+.cal-nav{
+  width:28px;height:28px;border:1px solid var(--border);border-radius:8px;background:#fff;
+  color:var(--text);font-size:17px;line-height:1;cursor:pointer;padding:0;
+}
+.cal-nav:hover:not(:disabled){border-color:var(--text-faint);background:var(--slate-soft);}
+.cal-nav:disabled{opacity:.35;cursor:default;}
+.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-dow span{
+  text-align:center;font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.04em;color:var(--text-faint);padding:3px 0;
+}
+.cal-cell{
+  height:34px;border:0;border-radius:8px;background:transparent;
+  font-family:var(--sans);font-size:12.5px;color:var(--text);cursor:pointer;padding:0;
+}
+.cal-cell:hover:not(:disabled){background:var(--slate-soft);}
+.cal-cell:disabled{color:var(--text-faint);opacity:.4;cursor:default;}
+.cal-cell.in-range{background:var(--brand-tint,#E8EEFA);border-radius:0;}
+.cal-cell.is-start,.cal-cell.is-end{background:var(--brand,#2453A6);color:var(--ink,#121A2B);font-weight:700;}
+.cal-cell.is-start:not(.is-end){border-radius:8px 0 0 8px;}
+.cal-cell.is-end:not(.is-start){border-radius:0 8px 8px 0;}
+.cal-hint{font-size:11.5px;color:var(--text-soft);padding:4px 2px 0;}
+.cal-grid-months{grid-template-columns:repeat(3,1fr);gap:4px;}
+.cal-month{height:38px;text-transform:capitalize;}
+.cal-grid-months .cal-cell{border-radius:8px !important;}

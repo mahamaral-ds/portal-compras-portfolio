@@ -1,0 +1,72 @@
+{
+  "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "baseRawPath",
+      "type": "promptString",
+      "description": "Caminho da planilha bruta de notas fiscais (base-raw-compras.xlsx)"
+    },
+    {
+      "id": "baseKpisPath",
+      "type": "promptString",
+      "description": "Caminho da planilha base-KPIs.xlsx"
+    },
+    {
+      "id": "baseCmcPath",
+      "type": "promptString",
+      "description": "Caminho da planilha base-CMC.xlsx"
+    },
+    {
+      "id": "otifBasePath",
+      "type": "promptString",
+      "description": "Caminho da planilha OTIF_base.xlsx"
+    }
+  ],
+  "tasks": [
+    {
+      "label": "Build: Fornecedores",
+      "type": "shell",
+      "command": "python",
+      "args": ["build_data.py", "${input:baseRawPath}"],
+      "options": { "cwd": "${workspaceFolder}/modules/fornecedores" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Build: Indicadores Estratégicos",
+      "type": "shell",
+      "command": "python",
+      "args": ["build_data.py", "${input:baseRawPath}", "${input:baseKpisPath}"],
+      "options": { "cwd": "${workspaceFolder}/modules/indicadores" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Build: Performance de Compras (OTIF)",
+      "type": "shell",
+      "command": "python",
+      "args": ["build_data.py", "${input:otifBasePath}"],
+      "options": { "cwd": "${workspaceFolder}/modules/performance" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Build: CMC por Casas",
+      "type": "shell",
+      "command": "python",
+      "args": ["build_data.py", "${input:baseCmcPath}"],
+      "options": { "cwd": "${workspaceFolder}/modules/cmc" },
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Build: Análise de Itens",
+      "type": "shell",
+      "command": "python",
+      "args": ["build_data.py", "${input:baseRawPath}", "${input:baseCmcPath}"],
+      "options": { "cwd": "${workspaceFolder}/modules/analise-itens" },
+      "problemMatcher": [],
+      "group": "build"
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Categorias · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">Categorias</h1>
+      <p class="brand-sub" id="brandSub">Painel central de acompanhamento das categorias de produto</p>
+    </div>
+    <div class="header-meta">
+      Gerado em <strong id="genDate">—</strong><br>
+      <span id="genTotal">—</span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-view="visao" class="active">Visão Geral</button>
+    <button data-view="ranking">Ranking de Categorias</button>
+    <button data-view="composicao">Composição</button>
+    <button data-view="evolucao">Evolução Mensal</button>
+  </nav>
+  <div class="period-bar" id="periodBar">
+    <span class="period-label">Período:</span>
+    <div class="period-chips" id="periodChips"></div>
+    <span class="period-note" id="periodNote"></span>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= VISÃO GERAL ================= -->
+  <section class="view active" id="view-visao">
+
+    <div class="kpi-grid" id="kpiGrid"></div>
+
+    <div class="hero">
+      <div class="hero-stat">
+        <div class="big" id="heroBig">—<span>% das categorias</span></div>
+        <div class="desc" id="heroDesc"></div>
+      </div>
+      <div class="hero-chart-card">
+        <div class="chart-title">Distribuição de valor por classe (ABC)</div>
+        <div class="chart-wrap" style="height:190px;">
+          <canvas id="chartClasseDonut"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3 section-block">
+      <div class="card">
+        <div class="section-title">Spend por categoria</div>
+        <p class="section-sub" id="spendSub">Valor total comprado, por categoria</p>
+        <div class="chart-wrap" style="height:340px;">
+          <canvas id="chartSpend"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Itens por categoria</div>
+        <p class="section-sub" id="itensSub">Quantidade de itens (SKUs) únicos, por categoria</p>
+        <div class="chart-wrap" style="height:340px;">
+          <canvas id="chartItens"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Fornecedores por categoria</div>
+        <p class="section-sub" id="fornSub">Quantidade de fornecedores únicos, por categoria</p>
+        <div class="chart-wrap" style="height:340px;">
+          <canvas id="chartFornecedores"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= RANKING ================= -->
+  <section class="view" id="view-ranking">
+    <div class="section-title" id="rankingTitle">Ranking de categorias — Base completa</div>
+    <p class="section-sub">Clique nos cabeçalhos para ordenar. Use a busca ou os filtros de classe para refinar.</p>
+    <div class="card">
+      <div class="table-toolbar">
+        <input type="text" class="search-input" id="rankSearch" placeholder="Buscar categoria ou fornecedor principal...">
+        <div class="filter-chips" id="rankFilters">
+          <div class="chip active" data-classe="ALL">Todas</div>
+          <div class="chip" data-classe="A">Classe A</div>
+          <div class="chip" data-classe="B">Classe B</div>
+          <div class="chip" data-classe="C">Classe C</div>
+        </div>
+        <span id="rankResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
+      </div>
+      <div class="table-scroll">
+        <table id="rankingTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= COMPOSIÇÃO ================= -->
+  <section class="view" id="view-composicao">
+    <div class="section-title">Composição por subcategoria</div>
+    <p class="section-sub">Mapa de árvore: cada bloco é uma categoria e cada quadro dentro dele é uma subcategoria. A área de cada quadro é proporcional ao valor acumulado dele — quadros muito pequenos recebem uma área mínima para continuarem visíveis e clicáveis. Passe o mouse para ver nome, valor e participação; clique em uma subcategoria para ver os fornecedores vinculados a ela.</p>
+    <div class="card">
+      <div id="treemapContainer"></div>
+    </div>
+
+    <div class="card section-block" id="subcatFornCard">
+      <div class="section-title" id="subcatFornTitle" style="font-size:13px;">Fornecedores da subcategoria</div>
+      <p class="section-sub" id="subcatFornSub">Clique em uma subcategoria acima para ver os fornecedores vinculados a ela.</p>
+      <div class="table-scroll">
+        <table id="subcatFornTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= EVOLUÇÃO MENSAL ================= -->
+  <section class="view" id="view-evolucao">
+    <div class="section-title">Evolução mensal por categoria</div>
+    <p class="section-sub">Top 8 categorias por valor + "Outros" · esta aba sempre exibe a série completa</p>
+
+    <div class="card section-block">
+      <div class="table-toolbar">
+        <div class="chart-title" style="font-size:12.5px;font-weight:700;color:var(--text-soft);">Composição mensal</div>
+        <div class="toggle-group" id="evoToggle">
+          <div class="toggle-btn active" data-mode="valor">Valor</div>
+          <div class="toggle-btn" data-mode="itens">Itens Únicos</div>
+          <div class="toggle-btn" data-mode="fornecedores">Fornecedores</div>
+        </div>
+      </div>
+      <div class="chart-wrap" style="height:360px;">
+        <canvas id="chartEvolucao"></canvas>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Dashboard gerado a partir da base bruta de notas fiscais (mesma base dos módulos de Fornecedores, Indicadores e Análise de Itens). Dados sintéticos — empresa fictícia, projeto de portfólio.
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Categorias',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="chart.umd.min.js"></script>
+<script src="../../shared/portal-period-filter.js"></script>
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

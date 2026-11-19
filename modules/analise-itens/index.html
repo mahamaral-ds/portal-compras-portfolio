@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análise de Itens · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+<link rel="stylesheet" href="../../shared/portal-filters.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">Análise de Itens</h1>
+      <p class="brand-sub" id="brandSub">Base tratada de compras, item a item</p>
+    </div>
+    <div class="header-meta">
+      Gerado em <strong id="genDate">—</strong><br>
+      <span id="genTotal">—</span>
+    </div>
+  </div>
+  <nav class="tabs" id="tabNav">
+    <button data-view="precos" class="active">Histórico de Preços</button>
+    <button data-view="geo">Preços por Geolocalização</button>
+    <button data-view="inteligencia">Curva ABC</button>
+    <button data-view="topitens">Top Itens por Categoria</button>
+    <button data-view="tabela">Tabela Detalhada</button>
+  </nav>
+  <div class="period-bar" id="periodBar" style="display:none;">
+    <span class="period-label">Período:</span>
+    <div class="period-chips" id="periodChips"></div>
+    <span class="period-note" id="periodNote">Ctrl+clique para selecionar vários meses</span>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= HISTÓRICO DE PREÇOS ================= -->
+  <section class="view active" id="view-precos">
+
+    <div class="section-block">
+      <div class="section-title">Filtros</div>
+      <p class="section-sub">Defina o recorte (opcional) e busque um item — os gráficos aparecem com o item selecionado e sempre mostram o preço na unidade de referência dele (a de maior valor comprado)</p>
+      <div class="card">
+        <div class="filter-panel filter-panel-hist">
+          <div class="filter-field filter-field-data">
+            <label id="hDataLabel">Data de lançamento</label>
+            <div class="dd-filter" id="hData"></div>
+          </div>
+          <div class="filter-field filter-field-casa">
+            <label id="hCasaLabel">Casa</label>
+            <div class="dd-filter" id="hCasa"></div>
+          </div>
+          <div class="filter-field">
+            <label id="hSegmentoLabel">Segmento</label>
+            <div class="dd-filter" id="hSegmento"></div>
+          </div>
+          <div class="filter-field filter-field-segreg" id="hSegRegField">
+            <label id="hSegRegLabel">Segmento × Região</label>
+            <div class="dd-filter" id="hSegReg"></div>
+          </div>
+          <div class="filter-field item-search">
+            <label for="hItemSearch">Item</label>
+            <input type="text" id="hItemSearch" placeholder="Buscar item..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="hItemList" aria-autocomplete="list">
+            <button type="button" class="item-search-clear" id="hItemClear" aria-label="Limpar item" hidden>×</button>
+            <ul class="item-suggest" id="hItemList" role="listbox" hidden></ul>
+          </div>
+        </div>
+        <div class="filter-toolbar" style="margin-bottom:0;">
+          <span class="result-count" id="hResumoRecorte">—</span>
+          <button class="btn-secondary" id="hBtnClear">Limpar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hist-aviso" id="hPlaceholder">Selecione os filtros e um item para visualizar o histórico de preço</div>
+    <div class="card hist-aviso" id="hEmpty" hidden>Nenhuma compra deste item para os filtros selecionados</div>
+
+    <div id="hCharts" hidden>
+      <div class="section-block">
+        <div class="section-title">Histórico de preço por item</div>
+        <p class="section-sub" id="hPrecoSub">Evolução mensal do preço médio</p>
+        <div class="card">
+          <div class="table-toolbar">
+            <span class="um-ref" id="itemUmRef"></span>
+            <span class="um-ref" id="hPrecoBase"></span>
+          </div>
+          <div class="chart-wrap" id="hPrecoWrap" style="height:240px;">
+            <canvas id="chartItemPreco"></canvas>
+          </div>
+          <div class="hist-aviso hist-aviso-interno" id="hPrecoVazio" hidden></div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">Evolução do gasto por item</div>
+        <p class="section-sub">Valor gasto em cada mês com o item selecionado, com todas as unidades de medida (mês sem compra = R$ 0)</p>
+        <div class="card">
+          <div class="table-toolbar">
+            <span id="gastoItemResumo" style="font-size:12px;color:var(--text-soft);"></span>
+          </div>
+          <div class="chart-wrap" style="height:300px;">
+            <canvas id="chartItemGasto"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block" id="dqBlock" style="display:none;">
+      <div class="dq-note">
+        <b>Nota de qualidade de dado:</b> <span id="dqText"></span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= INTELIGÊNCIA DE COMPRAS ================= -->
+  <section class="view" id="view-inteligencia">
+
+    <div class="section-block">
+      <div class="section-title">Curva ABC por item</div>
+      <p class="section-sub">Concentração do valor comprado por item (Classe A ≤ 80% acumulado, B ≤ 95%, C acima disso)</p>
+      <div class="card">
+        <div class="chart-wrap" style="height:320px;">
+          <canvas id="chartABCItens"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="abc-grid section-block">
+      <div class="card" id="abcItemClassCards"></div>
+      <div class="card">
+        <div class="table-scroll" id="rankingItensScroll">
+          <table id="rankingItensTable">
+            <thead><tr><th>#</th><th>Item</th><th>Categoria</th><th class="num">Valor</th><th class="num">Part.%</th><th>Classe</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= PREÇOS POR GEOLOCALIZAÇÃO ================= -->
+  <section class="view" id="view-geo">
+
+    <div class="section-block">
+      <div class="section-title">Filtros</div>
+      <p class="section-sub">Defina o recorte (opcional) — indicadores e heatmap se recalculam; o preço de cada item é sempre na unidade de referência dele</p>
+      <div class="card">
+        <div class="filter-panel filter-panel-hist">
+          <div class="filter-field filter-field-data">
+            <label id="gDataLabel">Data de lançamento</label>
+            <div class="dd-filter" id="gData"></div>
+          </div>
+          <div class="filter-field filter-field-casa">
+            <label id="gCasaLabel">Casa</label>
+            <div class="dd-filter" id="gCasa"></div>
+          </div>
+          <div class="filter-field">
+            <label id="gSegmentoLabel">Segmento</label>
+            <div class="dd-filter" id="gSegmento"></div>
+          </div>
+          <div class="filter-field filter-field-segreg" id="gSegRegField">
+            <label id="gSegRegLabel">Segmento × Região</label>
+            <div class="dd-filter" id="gSegReg"></div>
+          </div>
+          <div class="filter-field">
+            <label for="geoPriceSearch">Item</label>
+            <input type="text" id="geoPriceSearch" placeholder="Buscar item..." autocomplete="off">
+          </div>
+        </div>
+        <div class="filter-toolbar" style="margin-bottom:0;">
+          <span class="result-count" id="gResumoRecorte">—</span>
+          <button class="btn-secondary" id="gBtnClear">Limpar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="geo-kpi-row" id="geoKpiRow"></div>
+
+    <div class="section-block">
+      <div class="section-title">Heatmap de preço médio por região</div>
+      <p class="section-sub" id="geoSectionSub">Top itens de maior valor comprado · preço médio (valor ÷ quantidade) por região, na unidade de referência de cada item — células mais escuras = preço mais alto para aquele item</p>
+      <div class="card">
+        <div class="table-toolbar">
+          <div class="filter-chips" id="geoSortChips">
+            <div class="chip active" data-sort="valor">Maior valor comprado</div>
+            <div class="chip" data-sort="variacao">Maior variação</div>
+            <div class="chip" data-sort="nome">Nome (A-Z)</div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table id="geoPriceTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="dq-note" id="geoDqNote"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= TABELA DETALHADA ================= -->
+  <section class="view" id="view-tabela">
+
+  <div class="section-block">
+    <div class="section-title">Filtros</div>
+    <p class="section-sub">Combine quantos filtros quiser — a tabela e a exportação sempre refletem o resultado filtrado</p>
+    <div class="card">
+      <div class="filter-panel">
+        <div class="filter-field filter-field-data">
+          <label id="fDataLabel">Data de lançamento</label>
+          <div class="dd-filter" id="fData"></div>
+        </div>
+        <div class="filter-field filter-field-casa">
+          <label id="fCasaLabel">Casa</label>
+          <div class="dd-filter" id="fCasa"></div>
+        </div>
+        <div class="filter-field filter-field-grupo">
+          <label id="fGrupoLabel">Grupo</label>
+          <div class="dd-filter" id="fGrupo"></div>
+        </div>
+        <div class="filter-field">
+          <label id="fSegmentoLabel">Segmento</label>
+          <div class="dd-filter" id="fSegmento"></div>
+        </div>
+        <div class="filter-field filter-field-segreg" id="fSegRegField">
+          <label id="fSegRegLabel">Segmento × Região</label>
+          <div class="dd-filter" id="fSegReg"></div>
+        </div>
+        <div class="filter-field filter-field-forn">
+          <label for="fFornecedor">Fornecedor</label>
+          <input type="text" id="fFornecedor" placeholder="Buscar fornecedor...">
+        </div>
+        <div class="filter-field filter-field-item">
+          <label for="fItem">Descrição do item</label>
+          <input type="text" id="fItem" placeholder="Buscar item...">
+        </div>
+        <div class="filter-field filter-field-descforn">
+          <label for="fDescForn">Descrição item fornecedor</label>
+          <input type="text" id="fDescForn" placeholder="Buscar descrição do fornecedor...">
+        </div>
+        <div class="filter-field filter-field-nf">
+          <label for="fNF">NF</label>
+          <input type="text" id="fNF" placeholder="Buscar NF..." inputmode="numeric" autocomplete="off">
+        </div>
+      </div>
+      <div class="filter-toolbar">
+        <span class="result-count" id="resultCount">—</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-secondary" id="btnClearFilters">Limpar filtros</button>
+          <button class="btn-primary" id="btnExportExcel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><path d="M7 10l5 5 5-5"></path><path d="M12 15V3"></path></svg>
+            Exportar Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="table-xscroll" id="detailXScroll" hidden aria-hidden="true"><div id="detailXScrollInner"></div></div>
+      <div class="detail-table-wrap" id="detailWrap">
+        <table id="detailTable">
+          <thead></thead>
+          <tbody></tbody>
+          <tfoot></tfoot>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span class="page-info" id="pageInfo">—</span>
+        <div class="page-controls">
+          <label style="font-size:12px;color:var(--text-soft);">Linhas por página:
+            <select id="pageSizeSelect">
+              <option value="25">25</option>
+              <option value="50" selected>50</option>
+              <option value="100">100</option>
+              <option value="250">250</option>
+            </select>
+          </label>
+          <button id="btnFirstPage">« Primeira</button>
+          <button id="btnPrevPage">‹ Anterior</button>
+          <span id="pageIndicator" style="font-size:12px;color:var(--text-soft);padding:0 6px;">—</span>
+          <button id="btnNextPage">Próxima ›</button>
+          <button id="btnLastPage">Última »</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </section>
+
+  <!-- ================= TOP ITENS POR CATEGORIA ================= -->
+  <section class="view" id="view-topitens">
+
+    <div class="section-block">
+      <div class="section-title">Filtros</div>
+      <p class="section-sub">Escolha uma categoria (grupo de produtos) e, se quiser, uma das subcategorias dela e o período — o ranking mostra os 10 itens de maior valor comprado, somando todas as unidades de medida</p>
+      <div class="card">
+        <div class="filter-panel filter-panel-3">
+          <div class="filter-field filter-field-casa">
+            <label id="tCatLabel">Categoria</label>
+            <div class="dd-filter" id="tCat"></div>
+          </div>
+          <div class="filter-field filter-field-casa">
+            <label id="tSubLabel">Subcategoria</label>
+            <div class="dd-filter" id="tSub"></div>
+          </div>
+          <div class="filter-field filter-field-data">
+            <label id="tDataLabel">Data de lançamento</label>
+            <div class="dd-filter" id="tData"></div>
+          </div>
+        </div>
+        <div class="filter-toolbar" style="margin-bottom:0;">
+          <span class="result-count" id="tResumoRecorte">—</span>
+          <button class="btn-secondary" id="tBtnClear">Limpar filtros</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card hist-aviso" id="tPlaceholder">Selecione uma categoria para ver os principais itens</div>
+    <div class="card hist-aviso" id="tEmpty" hidden>Nenhuma compra nesta categoria para o período selecionado</div>
+
+    <div id="tResultado" hidden>
+      <div class="section-block">
+        <div class="section-title" id="tTitulo">Top 10 itens por valor comprado</div>
+        <p class="section-sub" id="tSubtitulo">—</p>
+        <div class="card">
+          <div class="chart-wrap" id="tChartWrap" style="height:420px;">
+            <canvas id="chartTopItens"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title" style="font-size:14px;">Detalhamento do ranking</div>
+        <p class="section-sub">Participação calculada sobre o total comprado na categoria — ou na subcategoria, quando escolhida — no período (todos os itens, não só os 10). A quantidade aparece por unidade de medida, porque unidades diferentes não se somam; a unidade de referência do item vem primeiro.</p>
+        <div class="card">
+          <div class="table-scroll">
+            <table id="topItensTable">
+              <thead><tr><th class="num">#</th><th>Item</th><th class="num">Valor comprado</th><th class="num" id="tColPart">Participação na categoria</th><th>Quantidade comprada</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  Base de compras tratada automaticamente a partir da planilha bruta de notas fiscais (<span id="footPeriodo">—</span>). Dados sintéticos — empresa fictícia, projeto de portfólio.
+</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'Análise de Itens',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="xlsx.full.min.js"></script>
+<script src="chart.umd.min.js"></script>
+<script src="../../shared/portal-period-filter.js"></script>
+<script src="../../shared/portal-filters.js"></script>
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Versoes fixas: o mesmo gerador com a mesma semente produz exatamente os mesmos dados na sua maquina e no
+# GitHub Actions. Para atualizar, instale as novas versoes no .venv, rode scripts/build_all.py e confira o portal.
+pandas==3.1.0
+numpy==2.5.4
+openpyxl==3.1.5
+pillow==13.0.0
+matplotlib==3.11.2

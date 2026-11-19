@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+server/.venv/
+
+# Planilhas de origem: geradas por scripts/gerar_dados_sinteticos.py (semente fixa).
+# Ficam fora do repositorio porque podem ser recriadas de forma identica a qualquer momento.
+raw-data/
+*.xlsx
+*.xls
+*.csv
+
+# Artefatos de distribuicao pontual (gerados por build_standalone.py)
+modules/*/dist/
+
+# Assistente (server/): registros de perguntas e chaves de API nunca vao para o repositorio
+server/logs/
+.env
+.env.*
+
+# Configuracoes locais de ferramentas
+.claude/settings.local.json
+
+# Sistema operacional / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+
+# Site montado para o GitHub Pages (gerado por scripts/montar_site.py, no workflow)
+_site/
+
+# Lista local de termos sensiveis usada por scripts/verificar_vazamento.py (NUNCA versionar)
+.termos-sensiveis.txt
+
+# Segredos e credenciais em qualquer formato
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.*
+credentials*.json
+
+# Planilhas e exportacoes originais (inclui arquivos temporarios do Excel)
+*.xlsm
+*.xlsb
+*.ods
+~$*
+
+# Configuracoes locais de editor
+.vscode/*.local.json
+
+# Simulacao local do endereco do GitHub Pages (usuario.github.io/repositorio/)
+_preview/

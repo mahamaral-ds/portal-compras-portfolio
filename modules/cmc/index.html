@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMV e CMC · Quintaluz</title>
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../assets/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="../../shared/portal-style.css">
+<link rel="stylesheet" href="../../shared/portal-print.css">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="../../shared/portal-theme.css">
+</head>
+<body>
+
+<div id="portalTopbar"></div>
+
+<header>
+  <div class="header-top">
+    <div>
+      <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
+      <h1 class="brand-title">CMV e CMC</h1>
+      <p class="brand-sub" id="brandSub">Custo por casa do grupo</p>
+    </div>
+    <div class="header-meta">
+      Gerado em <strong id="genDate">—</strong><br>
+      <span id="genTotal">—</span>
+    </div>
+  </div>
+  <nav class="indicator-tabs" id="indicatorNav">
+    <button data-indicador="cmv" class="active">CMV</button>
+    <button data-indicador="cmc">CMC</button>
+  </nav>
+  <nav class="tabs" id="tabNav">
+    <button data-view="visao" class="active">Visão Geral</button>
+    <button data-view="ranking">Ranking de Casas</button>
+    <button data-view="geo">Geolocalização</button>
+  </nav>
+  <div class="period-bar" id="periodBar">
+    <span class="period-label">Período:</span>
+    <div class="period-chips" id="periodChips"></div>
+    <span class="period-note" id="periodNote">Ctrl+clique para selecionar vários meses</span>
+  </div>
+</header>
+
+<main id="mainContent">
+
+  <!-- ================= VISÃO GERAL ================= -->
+  <section class="view active" id="view-visao">
+
+    <div class="kpi-grid" id="kpiGrid" style="grid-template-columns:repeat(4,1fr);"></div>
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title"><span>Evolução mensal do <span class="ind-label">CMC</span></span></div>
+        <p class="section-sub" id="evoSub">—</p>
+        <div class="chart-wrap" style="height:280px;">
+          <canvas id="chartEvolucao"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Composição da receita</div>
+        <p class="section-sub" id="composicaoSub">Participação de cada categoria nas vendas do período selecionado</p>
+        <div class="chart-wrap" style="height:230px;">
+          <canvas id="chartComposicao"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title"><span><span class="ind-label">CMC</span> por categoria</span></div>
+        <p class="section-sub" id="categoriaSub">Comparação entre categorias no período selecionado</p>
+        <div class="chart-wrap" style="height:220px;">
+          <canvas id="chartCategoria"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Mural de insights</div>
+        <p class="section-sub" id="insightSub">Gerados a partir do período selecionado</p>
+        <div class="insight-list" id="insightList"></div>
+      </div>
+    </div>
+
+    <div class="section-block" id="dqBlock" style="display:none;">
+      <div class="dq-note">
+        <b>Nota de qualidade de dado:</b> <span id="dqText"></span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= RANKING DE CASAS ================= -->
+  <section class="view" id="view-ranking">
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title" style="font-size:14px;"><span>Melhores casas (menor <span class="ind-label">CMC</span>)</span></div>
+        <p class="section-sub"><span class="ind-label">CMC</span> do período selecionado · Média/Mediana consideram todo o período disponível para cada casa</p>
+        <div class="table-scroll">
+          <table id="tableMelhores">
+            <thead><tr><th>Casa</th><th class="num">Vendas</th><th class="num">Média <span class="ind-label">CMC</span></th><th class="num">Mediana <span class="ind-label">CMC</span></th><th class="num"><span class="ind-label">CMC</span></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:14px;"><span>Piores casas (maior <span class="ind-label">CMC</span>)</span></div>
+        <p class="section-sub"><span class="ind-label">CMC</span> do período selecionado · Média/Mediana consideram todo o período disponível para cada casa</p>
+        <div class="table-scroll">
+          <table id="tablePiores">
+            <thead><tr><th>Casa</th><th class="num">Vendas</th><th class="num">Média <span class="ind-label">CMC</span></th><th class="num">Mediana <span class="ind-label">CMC</span></th><th class="num"><span class="ind-label">CMC</span></th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Ranking completo</div>
+      <p class="section-sub">Todas as casas com custo registrado no período selecionado — Média e Mediana de <span class="ind-label">CMC</span> consideram todo o período disponível para cada casa, independente do filtro acima · clique nos cabeçalhos para ordenar</p>
+      <div class="card">
+        <div class="table-toolbar">
+          <input type="text" class="search-input" id="rankSearch" placeholder="Buscar casa...">
+          <span id="rankResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
+        </div>
+        <div class="table-scroll">
+          <table id="rankingTable">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span>Mapa de calor: <span class="ind-label">CMC</span> por casa e mês</span></div>
+      <p class="section-sub" id="heatmapSub">Todas as casas, ordenadas por volume de vendas (decrescente)</p>
+      <div class="card">
+        <div class="table-toolbar">
+          <input type="text" class="search-input" id="heatmapSearch" placeholder="Buscar casa...">
+          <span id="heatmapResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
+        </div>
+        <div class="heatmap-scroll">
+          <table class="heatmap" id="heatmapCasaMes"></table>
+        </div>
+        <div class="legend-scale">
+          <span><span class="ind-label">CMC</span> mais baixo</span><div class="legend-swatch"></div><span><span class="ind-label">CMC</span> mais alto</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title"><span>Volume × <span class="ind-label">CMC</span></span></div>
+      <p class="section-sub">Casas de maior venda com pior <span class="ind-label">CMC</span> — prioridade de atuação · período selecionado</p>
+      <div class="card">
+        <div class="chart-wrap" style="height:320px;">
+          <canvas id="chartScatter"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ================= GEOLOCALIZAÇÃO ================= -->
+  <section class="view" id="view-geo">
+
+    <div class="section-block">
+      <div class="section-title"><span><span class="ind-label">CMC</span> por região</span></div>
+      <p class="section-sub">Período selecionado</p>
+      <div class="geo-region-grid" id="geoRegionCards"></div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">Matriz Segmento × Região</div>
+      <p class="section-sub"><span class="ind-label">CMC</span> de cada combinação segmento/região · célula vazia = nenhuma casa com custo registrado nessa combinação no período selecionado</p>
+      <div class="card">
+        <div class="table-scroll">
+          <table class="geo-matrix" id="geoMatrix"></table>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2 section-block">
+      <div class="card">
+        <div class="section-title" style="font-size:14px;"><span><span class="ind-label">CMC</span> por segmento, comparando as regiões</span></div>
+        <div class="chart-wrap" style="height:280px;">
+          <canvas id="chartGeoBar"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title" style="font-size:14px;">Vendas por região e segmento</div>
+        <p class="section-sub" style="margin-bottom:10px;">Área proporcional ao volume de vendas</p>
+        <div id="geoTreemap"></div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer id="footerText">—</footer>
+
+<script src="../../shared/portal-topbar.js"></script>
+<script>
+  renderPortalTopbar({
+    moduleName: 'CMV e CMC',
+    backHref: '../../index.html',
+    logoHref: '../../assets/quintaluz-logo.svg'
+  });
+</script>
+<script src="chart.umd.min.js"></script>
+<script src="../../shared/portal-period-filter.js"></script>
+<script src="../../shared/portal-period-agg.js"></script>
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>
