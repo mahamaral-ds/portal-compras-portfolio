@@ -1,9 +1,8 @@
 # Portal de Compras — Business Intelligence (projeto de portfólio)
 
-**🔗 Site publicado: <https://SEU-USUARIO.github.io/NOME-DO-REPOSITORIO/>**
-<!-- Troque SEU-USUARIO e NOME-DO-REPOSITORIO depois de criar o repositório no GitHub. -->
+**🔗 Site publicado: <https://mahamaral-ds.github.io/portal-compras-portfolio/>**
 
-[![Publicar no GitHub Pages](https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO/actions/workflows/pages.yml/badge.svg)](https://github.com/SEU-USUARIO/NOME-DO-REPOSITORIO/actions/workflows/pages.yml)
+[![Publicar no GitHub Pages](https://github.com/mahamaral-ds/portal-compras-portfolio/actions/workflows/pages.yml/badge.svg)](https://github.com/mahamaral-ds/portal-compras-portfolio/actions/workflows/pages.yml)
 
 Portal de BI para a área de Compras de uma rede de restaurantes: um menu central dá acesso a onze módulos
 (dashboards independentes) com gasto, fornecedores, preços, custo da mercadoria, desempenho de entrega,
