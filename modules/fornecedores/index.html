@@ -33,7 +33,7 @@
     <button data-view="abc">Curva ABC</button>
     <button data-view="ranking">Ranking de Fornecedores</button>
     <button data-view="grupo">Análise por Categoria</button>
-    <button data-view="segmento">Fornecedor × Vertical</button>
+    <button data-view="segmento">Fornecedor × Formato</button>
     <button data-view="performance">OTIF</button>
     <button data-view="regionalizacao">Regionalização</button>
     <button data-view="itens-forn">Itens por Fornecedor</button>
@@ -126,7 +126,7 @@
             <div class="dd-filter" id="rkData"></div>
           </div>
           <div class="filter-field">
-            <label id="rkCasaLabel">Casa</label>
+            <label id="rkCasaLabel">Loja</label>
             <div class="dd-filter" id="rkCasa"></div>
           </div>
           <div class="filter-field">
@@ -216,8 +216,8 @@
 
   <!-- ================= SEGMENTO ================= -->
   <section class="view" id="view-segmento">
-    <div class="section-title">Compras por fornecedor × vertical (unidade)</div>
-    <p class="section-sub">Top 20 fornecedores por valor total (no período selecionado), distribuídos entre as unidades/verticais de consumo</p>
+    <div class="section-title">Compras por fornecedor × formato (unidade)</div>
+    <p class="section-sub">Top 20 fornecedores por valor total (no período selecionado), distribuídos entre as lojas e formatos de consumo</p>
     <div class="card">
       <div class="heatmap-scroll">
         <table class="heatmap" id="heatmapTable"></table>
@@ -228,7 +228,7 @@
     </div>
 
     <div class="section-block" style="margin-top:20px;">
-      <div class="section-title">Total comprado por vertical</div>
+      <div class="section-title">Total comprado por formato</div>
       <div class="card">
         <div class="chart-wrap" style="height:220px;">
           <canvas id="chartSegmentoTotal"></canvas>
@@ -350,7 +350,7 @@
   <!-- ================= REGIONALIZAÇÃO ================= -->
   <section class="view" id="view-regionalizacao">
     <div class="section-title">Regionalização de Fornecedores</div>
-    <p class="section-sub">Estado (UF) real de cada fornecedor, a partir do complemento de cadastro (<code>complemento_fornecedores.xlsx</code>) — não é mais um proxy pela região da casa que compra. Fornecedores cujo nome não tem correspondência confiável nessa base (ausente, ou com filiais em estados diferentes que impedem saber qual delas vendeu para o grupo) aparecem à parte, em "Não informado".</p>
+    <p class="section-sub">Estado (UF) real de cada fornecedor, a partir do complemento de cadastro (<code>complemento_fornecedores.xlsx</code>) — não é mais um proxy pela região da loja que compra. Fornecedores cujo nome não tem correspondência confiável nessa base (ausente, ou com filiais em estados diferentes que impedem saber qual delas vendeu para o grupo) aparecem à parte, em "Não informado".</p>
     <div class="info-note" id="regioCoverageNote"></div>
 
     <div class="kpi-grid" id="regioKpiGrid" style="grid-template-columns:repeat(4,1fr);margin-top:16px;"></div>
@@ -433,7 +433,7 @@
         <div class="dd-filter" id="ifPeriodo"></div>
       </div>
       <div class="filter-field">
-        <label id="ifCasaLabel">Casa/Unidade</label>
+        <label id="ifCasaLabel">Loja/Unidade</label>
         <div class="dd-filter" id="ifCasa"></div>
       </div>
       <div class="filter-field">
@@ -445,7 +445,7 @@
         <select id="ifCriterio">
           <option value="valor">Valor comprado</option>
           <option value="nfs">Nº de NFs</option>
-          <option value="casas">Casas atendidas</option>
+          <option value="casas">Lojas atendidas</option>
           <option value="itens">Itens distintos</option>
         </select>
       </div>

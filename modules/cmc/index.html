@@ -20,7 +20,7 @@
     <div>
       <p class="brand-eyebrow">Compras &amp; Suprimentos</p>
       <h1 class="brand-title">CMV e CMC</h1>
-      <p class="brand-sub" id="brandSub">Custo por casa do grupo</p>
+      <p class="brand-sub" id="brandSub">Custo por loja da rede</p>
     </div>
     <div class="header-meta">
       Gerado em <strong id="genDate">—</strong><br>
@@ -33,7 +33,7 @@
   </nav>
   <nav class="tabs" id="tabNav">
     <button data-view="visao" class="active">Visão Geral</button>
-    <button data-view="ranking">Ranking de Casas</button>
+    <button data-view="ranking">Ranking de Lojas</button>
     <button data-view="geo">Geolocalização</button>
   </nav>
   <div class="period-bar" id="periodBar">
@@ -95,21 +95,21 @@
 
     <div class="grid-2 section-block">
       <div class="card">
-        <div class="section-title" style="font-size:14px;"><span>Melhores casas (menor <span class="ind-label">CMC</span>)</span></div>
-        <p class="section-sub"><span class="ind-label">CMC</span> do período selecionado · Média/Mediana consideram todo o período disponível para cada casa</p>
+        <div class="section-title" style="font-size:14px;"><span>Melhores lojas (menor <span class="ind-label">CMC</span>)</span></div>
+        <p class="section-sub"><span class="ind-label">CMC</span> do período selecionado · Média/Mediana consideram todo o período disponível para cada loja</p>
         <div class="table-scroll">
           <table id="tableMelhores">
-            <thead><tr><th>Casa</th><th class="num">Vendas</th><th class="num">Média <span class="ind-label">CMC</span></th><th class="num">Mediana <span class="ind-label">CMC</span></th><th class="num"><span class="ind-label">CMC</span></th></tr></thead>
+            <thead><tr><th>Loja</th><th class="num">Vendas</th><th class="num">Média <span class="ind-label">CMC</span></th><th class="num">Mediana <span class="ind-label">CMC</span></th><th class="num"><span class="ind-label">CMC</span></th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
       </div>
       <div class="card">
-        <div class="section-title" style="font-size:14px;"><span>Piores casas (maior <span class="ind-label">CMC</span>)</span></div>
-        <p class="section-sub"><span class="ind-label">CMC</span> do período selecionado · Média/Mediana consideram todo o período disponível para cada casa</p>
+        <div class="section-title" style="font-size:14px;"><span>Piores lojas (maior <span class="ind-label">CMC</span>)</span></div>
+        <p class="section-sub"><span class="ind-label">CMC</span> do período selecionado · Média/Mediana consideram todo o período disponível para cada loja</p>
         <div class="table-scroll">
           <table id="tablePiores">
-            <thead><tr><th>Casa</th><th class="num">Vendas</th><th class="num">Média <span class="ind-label">CMC</span></th><th class="num">Mediana <span class="ind-label">CMC</span></th><th class="num"><span class="ind-label">CMC</span></th></tr></thead>
+            <thead><tr><th>Loja</th><th class="num">Vendas</th><th class="num">Média <span class="ind-label">CMC</span></th><th class="num">Mediana <span class="ind-label">CMC</span></th><th class="num"><span class="ind-label">CMC</span></th></tr></thead>
             <tbody></tbody>
           </table>
         </div>
@@ -118,10 +118,10 @@
 
     <div class="section-block">
       <div class="section-title">Ranking completo</div>
-      <p class="section-sub">Todas as casas com custo registrado no período selecionado — Média e Mediana de <span class="ind-label">CMC</span> consideram todo o período disponível para cada casa, independente do filtro acima · clique nos cabeçalhos para ordenar</p>
+      <p class="section-sub">Todas as lojas com custo registrado no período selecionado — Média e Mediana de <span class="ind-label">CMC</span> consideram todo o período disponível para cada loja, independente do filtro acima · clique nos cabeçalhos para ordenar</p>
       <div class="card">
         <div class="table-toolbar">
-          <input type="text" class="search-input" id="rankSearch" placeholder="Buscar casa...">
+          <input type="text" class="search-input" id="rankSearch" placeholder="Buscar loja...">
           <span id="rankResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
         </div>
         <div class="table-scroll">
@@ -134,11 +134,11 @@
     </div>
 
     <div class="section-block">
-      <div class="section-title"><span>Mapa de calor: <span class="ind-label">CMC</span> por casa e mês</span></div>
-      <p class="section-sub" id="heatmapSub">Todas as casas, ordenadas por volume de vendas (decrescente)</p>
+      <div class="section-title"><span>Mapa de calor: <span class="ind-label">CMC</span> por loja e mês</span></div>
+      <p class="section-sub" id="heatmapSub">Todas as lojas, ordenadas por volume de vendas (decrescente)</p>
       <div class="card">
         <div class="table-toolbar">
-          <input type="text" class="search-input" id="heatmapSearch" placeholder="Buscar casa...">
+          <input type="text" class="search-input" id="heatmapSearch" placeholder="Buscar loja...">
           <span id="heatmapResultCount" style="font-size:11.5px;color:var(--text-faint);white-space:nowrap;"></span>
         </div>
         <div class="heatmap-scroll">
@@ -152,7 +152,7 @@
 
     <div class="section-block">
       <div class="section-title"><span>Volume × <span class="ind-label">CMC</span></span></div>
-      <p class="section-sub">Casas de maior venda com pior <span class="ind-label">CMC</span> — prioridade de atuação · período selecionado</p>
+      <p class="section-sub">Lojas de maior venda com pior <span class="ind-label">CMC</span> — prioridade de atuação · período selecionado</p>
       <div class="card">
         <div class="chart-wrap" style="height:320px;">
           <canvas id="chartScatter"></canvas>
@@ -173,7 +173,7 @@
 
     <div class="section-block">
       <div class="section-title">Matriz Segmento × Região</div>
-      <p class="section-sub"><span class="ind-label">CMC</span> de cada combinação segmento/região · célula vazia = nenhuma casa com custo registrado nessa combinação no período selecionado</p>
+      <p class="section-sub"><span class="ind-label">CMC</span> de cada combinação segmento/região · célula vazia = nenhuma loja com custo registrado nessa combinação no período selecionado</p>
       <div class="card">
         <div class="table-scroll">
           <table class="geo-matrix" id="geoMatrix"></table>

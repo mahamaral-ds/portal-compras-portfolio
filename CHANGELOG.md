@@ -7,6 +7,17 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 ## [Unreleased]
 
+### Alterado
+- O portal passa a representar uma **rede de cafeterias**, a Quintaluz Cafés: 23 lojas em três formatos (cafeteria,
+  bistrô e quiosque) e uma central de produção com torra própria.
+- Gerador de dados: novo catálogo de itens (cafés especiais, leites e bebidas vegetais, padaria, confeitaria, xaropes,
+  descartáveis), fornecedores, mix por formato, sazonalidade de inverno e choques de preço de café, cacau e leite.
+- CMC aberto em alimentos, **cafés** e bebidas; CMV e CMC por formato (cafeteria, bistrô e quiosque).
+- Commodities: famílias de café, leite, trigo, açúcar, cacau e frutas, e notícias de mercado do setor.
+- Pipeline, RFPs, Guia de Strategic Sourcing (texto, slides e PDF) com exemplos de cafeteria.
+- Nas páginas, "casa" passa a ser "loja" e "vertical" passa a ser "formato".
+- Logo e favicon: xícara com o sol nascendo, nas mesmas cores.
+
 ### Removido
 - Grupo "Assistente" do menu, com a página Supply Chat (`modules/supply-chat/`) e o servidor do assistente (`server/`).
 

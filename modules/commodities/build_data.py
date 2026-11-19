@@ -44,24 +44,19 @@ MONTH_LABELS_PT = {'01': 'Jan', '02': 'Fev', '03': 'Mar', '04': 'Abr', '05': 'Ma
 
 # id, nome, descricao da regra, funcao (df, um_ref) -> mascara das linhas da familia, id da categoria no IPCA (SIDRA 315)
 FAMILIAS = [
-    ('carne_bovina', 'Carne bovina', 'Subgrupo BOVINOS (cortes de boi)',
-     lambda d, ref: d['SUBGRUPO'] == 'BOVINOS', 7283),
-    ('suino', 'Suíno', 'Subgrupo SUINOS (inclui embutidos e curados de porco)',
-     lambda d, ref: d['SUBGRUPO'] == 'SUINOS', 7287),
-    ('frango', 'Frango', 'Subgrupo AVES',
-     lambda d, ref: d['SUBGRUPO'] == 'AVES', 107618),
-    ('leite_derivados', 'Leite e derivados', 'Grupo LATICINIOS, subgrupos QUEIJOS e LACTEOS (queijos, manteiga, creme de leite, leite)',
-     lambda d, ref: (d['GRUPO'] == 'LATICINIOS') & d['SUBGRUPO'].isin(['QUEIJOS', 'LACTEOS']) & ~d['DESCRICAO_ITEM'].str.contains('CACAU'), 7356),
-    ('trigo', 'Trigo (farinhas e massas)', 'Subgrupos FARINACEOS e MASSAS, sem farinhas de mandioca, milho, arroz e afins',
-     lambda d, ref: d['SUBGRUPO'].isin(['FARINACEOS', 'MASSAS']) & ~d['DESCRICAO_ITEM'].str.contains('MANDIOCA|TAPIOCA|MILHO|ARROZ|FUBA|POLVILHO|AMIDO|AVEIA|COCO'), 7184),
-    ('oleos_azeite', 'Óleos e azeite', 'Subgrupo OLEOS (azeite, óleo de soja, vegetal, girassol)',
-     lambda d, ref: d['SUBGRUPO'] == 'OLEOS', 7384),
-    ('cafe', 'Café', 'Itens "CAFE" comprados em KG (café em pó/grão; cápsulas, sachês e café expresso ficam de fora)',
-     lambda d, ref: d['DESCRICAO_ITEM'].str.contains(r'\bCAFE\b') & (d['DESCRICAO_ITEM'].map(ref) == 'KG'), 7392),
-    ('acucar', 'Açúcar', 'Itens que começam com "ACUCAR" comprados em KG (refinado, cristal, mascavo, confeiteiro; sem sachê)',
+    ('cafe', 'Café', 'Subgrupos CAFES ESPECIAIS, CAFES TRADICIONAIS e CAFE VERDE comprados em KG (grão torrado, moído e '
+     'café verde da torra própria; cápsulas, sachês e cold brew ficam de fora)',
+     lambda d, ref: d['SUBGRUPO'].isin(['CAFES ESPECIAIS', 'CAFES TRADICIONAIS', 'CAFE VERDE']) & (d['DESCRICAO_ITEM'].map(ref) == 'KG'), 7392),
+    ('leite_derivados', 'Leite e derivados', 'Grupo LATICINIOS, subgrupos LEITES, QUEIJOS e CREMES E MANTEIGAS (sem as bebidas vegetais)',
+     lambda d, ref: (d['GRUPO'] == 'LATICINIOS') & d['SUBGRUPO'].isin(['LEITES', 'QUEIJOS', 'CREMES E MANTEIGAS']), 7356),
+    ('trigo', 'Trigo (farinhas)', 'Subgrupo FARINACEOS, só as farinhas de trigo (sem fubá, polvilho, amido e farinha de amêndoas)',
+     lambda d, ref: (d['SUBGRUPO'] == 'FARINACEOS') & d['DESCRICAO_ITEM'].str.startswith('FARINHA DE TRIGO'), 7184),
+    ('acucar', 'Açúcar', 'Itens que começam com "ACUCAR" comprados em KG (refinado, cristal, demerara, mascavo, confeiteiro; sem sachê)',
      lambda d, ref: d['DESCRICAO_ITEM'].str.startswith('ACUCAR') & (d['DESCRICAO_ITEM'].map(ref) == 'KG'), 7220),
-    ('hortifruti', 'Tomate, batata e cebola', 'Subgrupo FLV-LEGUMES: tomate, batata e cebola in natura (sem batata-doce)',
-     lambda d, ref: (d['SUBGRUPO'] == 'FLV-LEGUMES') & d['DESCRICAO_ITEM'].str.match(r'(TOMATE|BATATA|CEBOLA)') & ~d['DESCRICAO_ITEM'].str.contains('DOCE'), 7200),
+    ('cacau', 'Cacau e chocolate', 'Subgrupo CHOCOLATES E CACAU (chocolate em pó, cacau, gotas e nibs)',
+     lambda d, ref: d['SUBGRUPO'] == 'CHOCOLATES E CACAU', 7243),
+    ('frutas', 'Frutas', 'Subgrupo FLV-FRUTAS (frutas in natura usadas em sucos, bowls e confeitaria)',
+     lambda d, ref: d['SUBGRUPO'] == 'FLV-FRUTAS', 7214),
 ]
 IPCA_GERAL, IPCA_ALIMENTACAO = 7169, 7170
 

@@ -8,10 +8,10 @@ planilha (diferenca < 0.0001 em todas as linhas testadas):
     Custo liquido de alimentos = COMPRAS ALIMENTOS + PRODUÇÃO CENTRAL
                                   - REF. FUNCIONARIO (V.MEDIO)
     % CMC ALIMENTOS = Custo liquido de alimentos / VENDAS ALIMENTOS
-    % CMC VINHOS     = COMPRAS VINHOS / VENDAS VINHOS
+    % CMC CAFES     = COMPRAS CAFES / VENDAS CAFES
     % CMC BEBIDAS    = COMPRAS BEBIDAS / VENDAS BEBIDAS
-    % CMC GERAL      = (Custo liquido de alimentos + COMPRAS VINHOS + COMPRAS BEBIDAS)
-                        / (VENDAS ALIMENTOS + VENDAS VINHOS + VENDAS BEBIDAS)
+    % CMC GERAL      = (Custo liquido de alimentos + COMPRAS CAFES + COMPRAS BEBIDAS)
+                        / (VENDAS ALIMENTOS + VENDAS CAFES + VENDAS BEBIDAS)
 
 CMC = Custo da Mercadoria Consumida. Quanto MENOR o percentual, melhor
 (menos custo de mercadoria em relacao a receita).
@@ -71,27 +71,27 @@ def compute_scope(scope, top_n_heatmap=None, casa_stats=None):
         return None
 
     vendas_alim = float(scope['VENDAS ALIMENTOS (+)'].sum())
-    vendas_vin = float(scope['VENDAS VINHOS (+)'].sum())
+    vendas_caf = float(scope['VENDAS CAFES (+)'].sum())
     vendas_beb = float(scope['VENDAS BEBIDAS (+)'].sum())
-    vendas_total = vendas_alim + vendas_vin + vendas_beb
+    vendas_total = vendas_alim + vendas_caf + vendas_beb
 
     custo_alim = float(scope['custo_liq_alimentos'].sum())
-    compras_vin = float(scope['COMPRAS VINHOS (-)'].sum())
+    compras_caf = float(scope['COMPRAS CAFES (-)'].sum())
     compras_beb = float(scope['COMPRAS BEBIDAS (-)'].sum())
-    custo_total = custo_alim + compras_vin + compras_beb
+    custo_total = custo_alim + compras_caf + compras_beb
 
     kpis = {
         'vendas_total': round(vendas_total, 2),
         'vendas_alimentos': round(vendas_alim, 2),
-        'vendas_vinhos': round(vendas_vin, 2),
+        'vendas_cafes': round(vendas_caf, 2),
         'vendas_bebidas': round(vendas_beb, 2),
         'custo_total': round(custo_total, 2),
         'custo_alimentos': round(custo_alim, 2),
-        'custo_vinhos': round(compras_vin, 2),
+        'custo_cafes': round(compras_caf, 2),
         'custo_bebidas': round(compras_beb, 2),
         'cmc_geral_pct': round(100 * safe_div(custo_total, vendas_total), 2) if vendas_total else None,
         'cmc_alimentos_pct': round(100 * safe_div(custo_alim, vendas_alim), 2) if vendas_alim else None,
-        'cmc_vinhos_pct': round(100 * safe_div(compras_vin, vendas_vin), 2) if vendas_vin else None,
+        'cmc_cafes_pct': round(100 * safe_div(compras_caf, vendas_caf), 2) if vendas_caf else None,
         'cmc_bebidas_pct': round(100 * safe_div(compras_beb, vendas_beb), 2) if vendas_beb else None,
         'qtd_casas': int(scope['CASA'].nunique()),
     }
@@ -99,14 +99,14 @@ def compute_scope(scope, top_n_heatmap=None, casa_stats=None):
     # ---- Ranking por casa ----
     g = scope.groupby('CASA').agg(
         vendas_alim=('VENDAS ALIMENTOS (+)', 'sum'),
-        vendas_vin=('VENDAS VINHOS (+)', 'sum'),
+        vendas_caf=('VENDAS CAFES (+)', 'sum'),
         vendas_beb=('VENDAS BEBIDAS (+)', 'sum'),
         custo_alim=('custo_liq_alimentos', 'sum'),
-        compras_vin=('COMPRAS VINHOS (-)', 'sum'),
+        compras_caf=('COMPRAS CAFES (-)', 'sum'),
         compras_beb=('COMPRAS BEBIDAS (-)', 'sum'),
     ).reset_index()
-    g['vendas_total'] = g['vendas_alim'] + g['vendas_vin'] + g['vendas_beb']
-    g['custo_total'] = g['custo_alim'] + g['compras_vin'].fillna(0) + g['compras_beb'].fillna(0)
+    g['vendas_total'] = g['vendas_alim'] + g['vendas_caf'] + g['vendas_beb']
+    g['custo_total'] = g['custo_alim'] + g['compras_caf'].fillna(0) + g['compras_beb'].fillna(0)
     g['cmc_pct'] = np.where(g['vendas_total'] > 0, 100 * g['custo_total'] / g['vendas_total'], np.nan)
     g = g.dropna(subset=['cmc_pct'])
 
@@ -146,15 +146,15 @@ def compute_scope(scope, top_n_heatmap=None, casa_stats=None):
         def agg_geo(group_cols):
             gg = scope.groupby(group_cols).agg(
                 vendas_alim=('VENDAS ALIMENTOS (+)', 'sum'),
-                vendas_vin=('VENDAS VINHOS (+)', 'sum'),
+                vendas_caf=('VENDAS CAFES (+)', 'sum'),
                 vendas_beb=('VENDAS BEBIDAS (+)', 'sum'),
                 custo_alim=('custo_liq_alimentos', 'sum'),
-                compras_vin=('COMPRAS VINHOS (-)', 'sum'),
+                compras_caf=('COMPRAS CAFES (-)', 'sum'),
                 compras_beb=('COMPRAS BEBIDAS (-)', 'sum'),
                 qtd_casas=('CASA', 'nunique'),
             ).reset_index()
-            gg['vendas_total'] = gg['vendas_alim'] + gg['vendas_vin'] + gg['vendas_beb']
-            gg['custo_total'] = gg['custo_alim'] + gg['compras_vin'].fillna(0) + gg['compras_beb'].fillna(0)
+            gg['vendas_total'] = gg['vendas_alim'] + gg['vendas_caf'] + gg['vendas_beb']
+            gg['custo_total'] = gg['custo_alim'] + gg['compras_caf'].fillna(0) + gg['compras_beb'].fillna(0)
             gg['cmc_pct'] = np.where(gg['vendas_total'] > 0, 100 * gg['custo_total'] / gg['vendas_total'], np.nan)
             gg[['vendas_total', 'custo_total']] = gg[['vendas_total', 'custo_total']].round(2)
             gg['cmc_pct'] = gg['cmc_pct'].round(2)
@@ -218,9 +218,9 @@ def compute_scope(scope, top_n_heatmap=None, casa_stats=None):
 # CMV (novo indicador, base "cmv-casas.xlsx") — mesma estrutura de saida do
 # CMC acima (kpis/ranking/melhores/piores/scatter/geo/heatmap), reaproveitada
 # pelo dashboard.js atraves de nomes de campo identicos (vendas_total,
-# custo_total, cmc_geral_pct, etc.). A "categoria" (Alimentos/Vinhos/Bebidas)
-# do CMC nao existe na base de CMV; usamos a coluna VERTICAL (Bar/Restaurante/
-# Cafeteria) no lugar, ja que tem a mesma cardinalidade (3 valores) e o mesmo
+# custo_total, cmc_geral_pct, etc.). A "categoria" (Alimentos/Cafes/Bebidas)
+# do CMC nao existe na base de CMV; usamos a coluna VERTICAL (Cafeteria/Quiosque/
+# Bistro) no lugar, ja que tem a mesma cardinalidade (3 valores) e o mesmo
 # papel de "3a dimensao" nos graficos de Visao Geral e na Geolocalizacao.
 #
 # Formula (conforme especificado): CMV % = CMV / RECEITA LIQUIDA. A coluna
@@ -229,8 +229,8 @@ def compute_scope(scope, top_n_heatmap=None, casa_stats=None):
 # na planilha (conferido: abs(CMV)/RECEITA LIQUIDA reproduz exatamente essa
 # coluna, diferenca 0.0 em todas as linhas testadas).
 # =============================================================================
-VERTICAL_KEYS = {'BAR': 'bar', 'RESTAURANTE': 'restaurante', 'CAFETERIA': 'cafeteria'}
-VERTICAL_LABELS = {'bar': 'Bar', 'restaurante': 'Restaurante', 'cafeteria': 'Cafeteria'}
+VERTICAL_KEYS = {'CAFETERIA': 'cafeteria', 'QUIOSQUE': 'quiosque', 'BISTRO': 'bistro'}
+VERTICAL_LABELS = {'cafeteria': 'Cafeteria', 'quiosque': 'Quiosque', 'bistro': 'Bistrô'}
 
 
 def compute_scope_cmv(scope, top_n_heatmap=None, casa_stats=None):
@@ -453,14 +453,14 @@ def compute_casa_cmc_stats(df):
     """
     monthly = df.groupby(['CASA', 'MES']).agg(
         vendas_alim=('VENDAS ALIMENTOS (+)', 'sum'),
-        vendas_vin=('VENDAS VINHOS (+)', 'sum'),
+        vendas_caf=('VENDAS CAFES (+)', 'sum'),
         vendas_beb=('VENDAS BEBIDAS (+)', 'sum'),
         custo_alim=('custo_liq_alimentos', 'sum'),
-        compras_vin=('COMPRAS VINHOS (-)', 'sum'),
+        compras_caf=('COMPRAS CAFES (-)', 'sum'),
         compras_beb=('COMPRAS BEBIDAS (-)', 'sum'),
     ).reset_index()
-    monthly['vendas_total'] = monthly['vendas_alim'] + monthly['vendas_vin'] + monthly['vendas_beb']
-    monthly['custo_total'] = monthly['custo_alim'] + monthly['compras_vin'].fillna(0) + monthly['compras_beb'].fillna(0)
+    monthly['vendas_total'] = monthly['vendas_alim'] + monthly['vendas_caf'] + monthly['vendas_beb']
+    monthly['custo_total'] = monthly['custo_alim'] + monthly['compras_caf'].fillna(0) + monthly['compras_beb'].fillna(0)
     monthly['cmc_pct'] = np.where(
         (monthly['vendas_total'] > 0) & (monthly['custo_total'] > 0),
         100 * monthly['custo_total'] / monthly['vendas_total'],
@@ -518,7 +518,7 @@ def main():
         periods[m] = compute_scope(df[df['MES'] == m], casa_stats=casa_stats)
 
     # ---- MoM para os KPIs executivos ----
-    mom_fields = ['cmc_geral_pct', 'cmc_alimentos_pct', 'cmc_vinhos_pct', 'cmc_bebidas_pct', 'vendas_total']
+    mom_fields = ['cmc_geral_pct', 'cmc_alimentos_pct', 'cmc_cafes_pct', 'cmc_bebidas_pct', 'vendas_total']
     for i, m in enumerate(months):
         if i == 0 or periods[m] is None:
             continue
@@ -546,7 +546,7 @@ def main():
             'MES': m,
             'cmc_geral_pct': k['cmc_geral_pct'],
             'cmc_alimentos_pct': k['cmc_alimentos_pct'],
-            'cmc_vinhos_pct': k['cmc_vinhos_pct'],
+            'cmc_cafes_pct': k['cmc_cafes_pct'],
             'cmc_bebidas_pct': k['cmc_bebidas_pct'],
             'vendas_total': k['vendas_total'],
         })
@@ -561,8 +561,8 @@ def main():
         for m in months:
             sub = df[(df['MES'] == m) & (df['CASA'] == casa)]
             if len(sub):
-                vt = sub['VENDAS ALIMENTOS (+)'].sum() + sub['VENDAS VINHOS (+)'].sum() + sub['VENDAS BEBIDAS (+)'].sum()
-                ct = sub['custo_liq_alimentos'].sum() + sub['COMPRAS VINHOS (-)'].fillna(0).sum() + sub['COMPRAS BEBIDAS (-)'].fillna(0).sum()
+                vt = sub['VENDAS ALIMENTOS (+)'].sum() + sub['VENDAS CAFES (+)'].sum() + sub['VENDAS BEBIDAS (+)'].sum()
+                ct = sub['custo_liq_alimentos'].sum() + sub['COMPRAS CAFES (-)'].fillna(0).sum() + sub['COMPRAS BEBIDAS (-)'].fillna(0).sum()
                 row.append(round(100 * ct / vt, 1) if vt else None)
             else:
                 row.append(None)

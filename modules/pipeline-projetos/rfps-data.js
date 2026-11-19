@@ -10,11 +10,11 @@ const RFPS_DATA = {
   "atualizado_em": "2026-10-20",
   "registros": [
     {
-      "id": "rfp-hortifruti-bares",
-      "categoria": "Hortifrúti Bares",
+      "id": "rfp-cafe-especial",
+      "categoria": "Café especial em grãos",
       "resultado": {
         "mes": "2025-11",
-        "valor_k": 86
+        "valor_k": 214
       },
       "marcos": [
         {
@@ -40,11 +40,11 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-hortifruti-restaurantes",
-      "categoria": "Hortifrúti Restaurantes",
+      "id": "rfp-leites",
+      "categoria": "Leites e bebidas vegetais",
       "resultado": {
         "mes": "2025-12",
-        "valor_k": 142
+        "valor_k": 168
       },
       "marcos": [
         {
@@ -65,11 +65,11 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-bebidas-nao-alcoolicas",
-      "categoria": "Bebidas não alcoólicas",
+      "id": "rfp-bebidas-frias",
+      "categoria": "Sucos, águas e bebidas frias",
       "resultado": {
         "mes": "2025-10",
-        "valor_k": 118
+        "valor_k": 54
       },
       "marcos": [
         {
@@ -90,8 +90,8 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-cervejas",
-      "categoria": "Cervejas e chopp",
+      "id": "rfp-copos-tampas",
+      "categoria": "Copos, tampas e descartáveis",
       "resultado": null,
       "marcos": [
         {
@@ -117,11 +117,11 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-bovinos",
-      "categoria": "Cortes bovinos",
+      "id": "rfp-paes-congelados",
+      "categoria": "Pães e salgados congelados",
       "resultado": {
         "mes": "2025-11",
-        "valor_k": 205
+        "valor_k": 96
       },
       "marcos": [
         {
@@ -142,8 +142,8 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-aves",
-      "categoria": "Aves e ovos",
+      "id": "rfp-confeitaria",
+      "categoria": "Bolos e confeitaria de vitrine",
       "resultado": null,
       "marcos": [
         {
@@ -164,11 +164,11 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-pescados",
-      "categoria": "Pescados",
+      "id": "rfp-frios",
+      "categoria": "Frios e queijos fatiados",
       "resultado": {
         "mes": "2026-01",
-        "valor_k": 64
+        "valor_k": 38
       },
       "marcos": [
         {
@@ -189,11 +189,11 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-laticinios",
-      "categoria": "Laticínios",
+      "id": "rfp-chocolates-xaropes",
+      "categoria": "Chocolates, cacau e xaropes",
       "resultado": {
         "mes": "2025-12",
-        "valor_k": 97
+        "valor_k": 61
       },
       "marcos": [
         {
@@ -215,7 +215,7 @@ const RFPS_DATA = {
     },
     {
       "id": "rfp-mercearia",
-      "categoria": "Mercearia seca",
+      "categoria": "Mercearia (açúcares, farinhas e grãos)",
       "resultado": null,
       "marcos": [
         {
@@ -236,8 +236,8 @@ const RFPS_DATA = {
       ]
     },
     {
-      "id": "rfp-embalagens",
-      "categoria": "Embalagens de delivery",
+      "id": "rfp-manutencao-maquinas",
+      "categoria": "Manutenção de máquinas de espresso",
       "resultado": null,
       "marcos": [
         {

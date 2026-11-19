@@ -1,5 +1,5 @@
 """
-Gera TODAS as bases de origem do portal com dados 100% sinteticos (Grupo Quintaluz Gastronomia, empresa ficticia).
+Gera TODAS as bases de origem do portal com dados 100% sinteticos (Quintaluz Cafes, rede de cafeterias ficticia).
 
 As planilhas seguem exatamente o esquema (abas, colunas e tipos) que os scripts build_data.py de cada modulo leem,
 entao nenhuma pagina precisa de alteracao de logica. Tudo e' derivado de uma semente fixa (SEED): rodar de novo
@@ -9,15 +9,15 @@ Saidas (em raw-data/):
     base-raw-compras.xlsx        notas fiscais de compra, uma linha por item de nota (Jan-Ago/2026)
     complemento_fornecedores.xlsx  CNPJ, UF e PMP de cada fornecedor
     OTIF_base.xlsx               pedidos com prazo/completude de entrega (aba BASE)
-    base-CMC.xlsx                vendas x compras por casa e mes (aba CMC)
-    cmv-casas.xlsx               receita liquida x CMV por casa e mes (aba CMV_CASAS)
+    base-CMC.xlsx                vendas x compras por loja e mes (aba CMC)
+    cmv-casas.xlsx               receita liquida x CMV por loja e mes (aba CMV_CASAS)
     base-KPIs.xlsx               inflacao interna, PMP, DIO, cotacoes, contratos e CMV (Jan/2025-Ago/2026)
     indices-mercado.json         IPCA por grupo e dolar (series sinteticas, usadas pela pagina de Commodities)
 
 Coerencia entre as bases:
-    - compras de alimentos/vinhos/bebidas da base de CMC = soma das notas de cada casa e mes;
-    - CMV por casa = custo das compras / receita; o CMV mensal dos KPIs vem da base de CMV;
-    - pedidos do OTIF sao as proprias notas fiscais geradas (mesmo fornecedor, casa, data e valor);
+    - compras de alimentos/cafes/bebidas da base de CMC = soma das notas de cada loja e mes;
+    - CMV por loja = custo das compras / receita; o CMV mensal dos KPIs vem da base de CMV;
+    - pedidos do OTIF sao as proprias notas fiscais geradas (mesmo fornecedor, loja, data e valor);
     - a inflacao interna dos KPIs e' o indice de preco pago calculado sobre as notas;
     - o IPCA sintetico de cada familia de commodity acompanha o choque de preco usado nas notas.
 
@@ -44,256 +44,206 @@ rng = np.random.default_rng(SEED)
 
 MESES = [f'2026-{m:02d}' for m in range(1, 9)]
 MESES_KPI = [f'2025-{m:02d}' for m in range(1, 13)] + MESES
-SAZONALIDADE = {'01': 1.06, '02': 0.91, '03': 0.97, '04': 0.99, '05': 1.03, '06': 0.98, '07': 1.09, '08': 1.01}
-PEDIDOS_POR_MES = 84          # pedidos (notas) por mes para uma casa de porte 1.0
-ESCALA_QTD = 1.5
+# cafeteria vende mais no frio (maio a agosto) e menos nas ferias de verao, quando os escritorios esvaziam
+SAZONALIDADE = {'01': 0.93, '02': 0.9, '03': 0.99, '04': 1.01, '05': 1.05, '06': 1.09, '07': 1.11, '08': 1.04}
+PEDIDOS_POR_MES = 90          # pedidos (notas) por mes para uma loja de porte 1.0
+ESCALA_QTD = 0.62           # porte de cafeteria: receita media de algumas centenas de milhares de reais por mes
 
 # =====================================================================================================================
-# Catalogo de itens: GRUPO -> SUBGRUPO -> "NOME|UM|preco base". Itens genericos, sem marca.
+# Catalogo de itens de uma rede de cafeterias: GRUPO -> SUBGRUPO -> "NOME|UM|preco base". Itens genericos, sem marca.
 # =====================================================================================================================
 CATALOGO = {
-    'PROTEINAS': {
-        'BOVINOS': """FILE MIGNON BOVINO PECA|KG|98
-            PICANHA BOVINA PECA|KG|86
-            CONTRA FILE BOVINO PECA|KG|62
-            ALCATRA BOVINA PECA|KG|48
-            FRALDINHA BOVINA|KG|46
-            COSTELA BOVINA JANELA|KG|29
-            ACEM BOVINO|KG|32
-            PATINHO BOVINO|KG|41
-            CARNE MOIDA BOVINA|KG|36
-            BIFE ANCHO BOVINO|KG|92
-            OSSOBUCO BOVINO|KG|34
-            CUPIM BOVINO|KG|44
-            MAMINHA BOVINA|KG|52
-            HAMBURGUER BOVINO 160G|UNID|7.8
-            CARPACCIO BOVINO FATIADO|KG|118""",
-        'SUINOS': """LOMBO SUINO|KG|24
-            COSTELINHA SUINA|KG|27
-            PANCETTA SUINA|KG|38
-            BACON EM MANTA|KG|42
-            LINGUICA TOSCANA|KG|23
-            PRESUNTO CRU FATIADO|KG|165
-            COPA LOMBO SUINA|KG|29
-            CALABRESA DEFUMADA|KG|26
-            PARMA FATIADO 100G|UNID|28""",
-        'AVES': """PEITO DE FRANGO SEM OSSO|KG|19
-            COXA E SOBRECOXA DE FRANGO|KG|14
-            FRANGO INTEIRO RESFRIADO|KG|12
-            ASA DE FRANGO TULIPA|KG|21
-            FILE DE SASSAMI|KG|23
-            GALETO RESFRIADO|UNID|16
-            OVOS BRANCOS|UNID|0.75
-            PEITO DE PATO|KG|96""",
-        'PESCADOS': """SALMAO FILE FRESCO|KG|98
-            CAMARAO CINZA LIMPO|KG|79
-            CAMARAO ROSA GRANDE|KG|118
-            FILE DE PESCADA|KG|42
-            ROBALO FILE|KG|92
-            LULA EM ANEIS|KG|48
-            ATUM FRESCO LOMBO|KG|110
-            FILE DE TILAPIA|KG|38
-            MEXILHAO LIMPO|KG|36
-            BACALHAU DESSALGADO|KG|99""",
-    },
-    'HORTIFRUTI': {
-        'FLV-LEGUMES': """TOMATE ITALIANO|KG|7.5
-            TOMATE CEREJA|KG|16
-            BATATA INGLESA|KG|5.2
-            BATATA DOCE|KG|5.8
-            CEBOLA BRANCA|KG|4.6
-            CEBOLA ROXA|KG|6.4
-            CENOURA|KG|4.9
-            ABOBRINHA ITALIANA|KG|6.8
-            BERINJELA|KG|6.2
-            PIMENTAO VERMELHO|KG|14
-            PIMENTAO VERDE|KG|8.5
-            ALHO DESCASCADO|KG|34
-            MANDIOCA DESCASCADA|KG|7.9
-            ABOBORA CABOTIA|KG|4.8
-            COGUMELO PARIS|KG|42
-            MILHO VERDE ESPIGA|UNID|2.4""",
-        'FLV-FRUTAS': """LIMAO TAHITI|KG|5.9
-            LARANJA PERA|KG|4.2
-            ABACAXI PEROLA|UNID|7.5
-            MORANGO|KG|24
-            BANANA PRATA|KG|6.3
-            MARACUJA AZEDO|KG|11
-            MANGA PALMER|KG|8.4
-            MELANCIA|KG|3.2
-            UVA SEM SEMENTE|KG|18
-            ABACATE|KG|9.5
-            LIMAO SICILIANO|KG|16""",
-        'FLV-VERDURAS': """ALFACE AMERICANA|UNID|4.2
-            RUCULA MACO|UNID|3.6
-            MANJERICAO MACO|UNID|4.4
-            SALSINHA MACO|UNID|2.6
-            CEBOLINHA MACO|UNID|2.6
-            COUVE MANTEIGA MACO|UNID|3.4
-            ESPINAFRE MACO|UNID|4.1
-            HORTELA MACO|UNID|3.9
-            MIX DE FOLHAS|KG|38
-            ALECRIM MACO|UNID|3.8""",
+    'CAFES': {
+        'CAFES ESPECIAIS': """CAFE ESPECIAL BLEND ESPRESSO GRAOS|KG|118
+            CAFE ESPECIAL BOURBON AMARELO GRAOS|KG|142
+            CAFE ESPECIAL CATUAI VERMELHO GRAOS|KG|134
+            CAFE ESPECIAL FERMENTADO MICROLOTE GRAOS|KG|210
+            CAFE ESPECIAL DESCAFEINADO GRAOS|KG|128
+            CAFE ESPECIAL PARA FILTRADOS GRAOS|KG|126
+            CAFE ESPECIAL SAFRA SAZONAL GRAOS|KG|156
+            CAFE COLD BREW CONCENTRADO|LITRO|46""",
+        'CAFE VERDE': """CAFE VERDE ARABICA BICA CORRIDA|KG|39
+            CAFE VERDE ARABICA FINO|KG|52
+            CAFE VERDE ESPECIAL MICROLOTE|KG|78""",
+        'CAFES TRADICIONAIS': """CAFE TORRADO BLEND TRADICIONAL GRAOS|KG|72
+            CAFE MOIDO TRADICIONAL|KG|58
+            CAFE SOLUVEL GRANULADO|KG|96
+            CAPSULA DE CAFE ESPRESSO|UNID|2.2
+            CAFE EM SACHE PARA COADOR|UNID|1.4""",
+        'CHAS E INFUSOES': """CHA PRETO EM FOLHAS|KG|160
+            CHA VERDE EM FOLHAS|KG|175
+            MATCHA EM PO|KG|420
+            CHAI LATTE EM PO|KG|88
+            INFUSAO DE FRUTAS VERMELHAS|KG|130
+            CHA DE CAMOMILA SACHE|UNID|0.45
+            CHA DE HORTELA SACHE|UNID|0.45
+            CHA MATE TOSTADO|KG|42""",
     },
     'LATICINIOS': {
-        'QUEIJOS': """QUEIJO MUSSARELA|KG|39
-            QUEIJO PARMESAO|KG|92
-            QUEIJO GRANA PADANO|KG|128
-            QUEIJO PROVOLONE|KG|62
-            QUEIJO GORGONZOLA|KG|74
-            BURRATA 200G|UNID|24
-            QUEIJO BRIE|KG|86
-            QUEIJO COALHO ESPETO|UNID|3.9
-            RICOTA FRESCA|KG|26
-            QUEIJO PRATO|KG|44
-            MUSSARELA DE BUFALA BOLINHA|KG|78""",
-        'LACTEOS': """LEITE INTEGRAL|LITRO|5.1
-            CREME DE LEITE FRESCO|LITRO|24
-            MANTEIGA SEM SAL|KG|52
-            IOGURTE NATURAL|KG|14
-            REQUEIJAO CREMOSO|KG|28
+        'LEITES': """LEITE INTEGRAL|LITRO|5.3
+            LEITE DESNATADO|LITRO|5.4
+            LEITE SEM LACTOSE|LITRO|6.6
+            LEITE INTEGRAL BARISTA|LITRO|7.4
             LEITE CONDENSADO|KG|19
-            MASCARPONE|KG|68
-            CREME DE LEITE UHT|LITRO|17""",
+            LEITE EM PO INTEGRAL|KG|42""",
+        'BEBIDAS VEGETAIS': """BEBIDA DE AVEIA BARISTA|LITRO|18
+            BEBIDA DE AMENDOAS|LITRO|22
+            BEBIDA DE COCO|LITRO|16
+            BEBIDA DE SOJA|LITRO|9.5""",
+        'QUEIJOS': """QUEIJO MUSSARELA FATIADO|KG|46
+            QUEIJO PRATO FATIADO|KG|48
+            QUEIJO MINAS FRESCAL|KG|38
+            QUEIJO CANASTRA MEIA CURA|KG|96
+            QUEIJO BRIE|KG|86
+            CREAM CHEESE|KG|44
+            REQUEIJAO CREMOSO|KG|29
+            QUEIJO PARMESAO RALADO|KG|98""",
+        'CREMES E MANTEIGAS': """MANTEIGA SEM SAL|KG|54
+            MANTEIGA COM SAL|KG|52
+            CREME DE LEITE FRESCO|LITRO|25
+            CREME DE LEITE UHT|LITRO|17
+            CREME CHANTILLY|LITRO|28
+            IOGURTE NATURAL INTEGRAL|KG|15
+            IOGURTE GREGO|KG|26""",
+    },
+    'PADARIA': {
+        'PAES': """PAO DE QUEIJO CONGELADO|KG|27
+            CROISSANT DE MANTEIGA CONGELADO|UNID|4.1
+            PAO NA CHAPA FRANCES|KG|17
+            PAO DE FORMA INTEGRAL|UNID|11
+            PAO BRIOCHE|UNID|2.6
+            CIABATTA|UNID|3.6
+            BAGEL|UNID|3.9
+            PAO DE FERMENTACAO NATURAL|UNID|19
+            PAO DE MILHO|UNID|2.2""",
+        'SALGADOS ASSADOS': """FOLHADO DE PRESUNTO E QUEIJO|UNID|5.8
+            EMPADA DE FRANGO|UNID|5.2
+            QUICHE DE ALHO PORO|UNID|11
+            ESFIHA ABERTA DE QUEIJO|UNID|4.6
+            CROISSANT RECHEADO PRESUNTO E QUEIJO|UNID|7.9""",
+    },
+    'CONFEITARIA': {
+        'BOLOS E TORTAS': """BOLO DE CENOURA COM CHOCOLATE|UNID|42
+            BOLO DE FUBA|UNID|34
+            BOLO DE LARANJA|UNID|36
+            TORTA DE LIMAO|UNID|68
+            CHEESECAKE DE FRUTAS VERMELHAS|UNID|92
+            TORTA HOLANDESA|UNID|88
+            BOLO RED VELVET|UNID|96""",
+        'DOCES E BISCOITOS': """COOKIE DE CHOCOLATE|UNID|4.3
+            BROWNIE|UNID|6.6
+            MUFFIN DE BLUEBERRY|UNID|6.2
+            MACARON SORTIDO|UNID|5.5
+            CANNOLI|UNID|7.2
+            BISCOITO AMANTEIGADO|KG|58
+            ALFAJOR|UNID|4.9
+            CINNAMON ROLL|UNID|8.4""",
     },
     'MERCEARIA': {
-        'FARINACEOS': """FARINHA DE TRIGO TIPO 1|KG|4.6
-            FARINHA DE TRIGO 00|KG|7.9
-            FARINHA PANKO|KG|21
-            FARINHA DE ROSCA|KG|9.5
-            FARINHA DE MANDIOCA|KG|8.4
-            FUBA MIMOSO|KG|5.1
-            AMIDO DE MILHO|KG|11""",
-        'MASSAS': """MASSA SPAGHETTI GRANO DURO|KG|13
-            MASSA PENNE GRANO DURO|KG|13
-            MASSA FETTUCCINE|KG|16
-            MASSA RIGATONI|KG|14
-            MASSA LASANHA|KG|15
-            GNOCCHI DE BATATA|KG|21
-            RAVIOLI DE QUEIJO|KG|39
-            MASSA FRESCA TAGLIATELLE|KG|28""",
-        'OLEOS': """AZEITE EXTRA VIRGEM|LITRO|46
-            OLEO DE SOJA|LITRO|7.6
-            OLEO DE GIRASSOL|LITRO|11
-            OLEO PARA FRITURA|LITRO|9.2
-            AZEITE COMPOSTO|LITRO|21""",
-        'GRAOS': """ARROZ AGULHINHA TIPO 1|KG|5.6
-            ARROZ ARBORIO|KG|24
-            FEIJAO CARIOCA|KG|7.4
-            FEIJAO PRETO|KG|8.1
-            GRAO DE BICO|KG|14
-            LENTILHA|KG|13
-            QUINOA EM GRAOS|KG|36""",
-        'CONSERVAS': """TOMATE PELADO|KG|12
-            MOLHO DE TOMATE TRADICIONAL|KG|9.8
-            AZEITONA VERDE SEM CAROCO|KG|26
-            AZEITONA PRETA|KG|29
-            PALMITO PUPUNHA|KG|38
-            ALCAPARRA|KG|58
-            PEPINO EM CONSERVA|KG|17
-            ATUM EM LATA|KG|42
-            MILHO EM CONSERVA|KG|11
-            EXTRATO DE TOMATE|KG|13""",
-        'TEMPEROS': """SAL REFINADO|KG|2.4
-            SAL GROSSO|KG|2.1
-            PIMENTA DO REINO MOIDA|KG|64
-            OREGANO DESIDRATADO|KG|58
-            PAPRICA DEFUMADA|KG|72
-            VINAGRE DE VINHO TINTO|LITRO|9.4
-            MOSTARDA DIJON|KG|44
-            MAIONESE|KG|16
-            KETCHUP|KG|14
-            SHOYU|LITRO|15
-            ACETO BALSAMICO|LITRO|38
-            CALDO DE LEGUMES|KG|31""",
-        'ACUCARES E DOCES': """ACUCAR REFINADO|KG|4.8
-            ACUCAR CRISTAL|KG|4.3
+        'FARINACEOS': """FARINHA DE TRIGO TIPO 1|KG|4.7
+            FARINHA DE TRIGO PARA CONFEITARIA|KG|6.9
+            FARINHA DE AMENDOAS|KG|98
+            FUBA MIMOSO|KG|5.2
+            POLVILHO AZEDO|KG|11
+            AMIDO DE MILHO|KG|11
+            FERMENTO BIOLOGICO SECO|KG|46""",
+        'ACUCARES E ADOCANTES': """ACUCAR REFINADO|KG|4.9
+            ACUCAR CRISTAL|KG|4.4
+            ACUCAR DEMERARA|KG|9.8
             ACUCAR MASCAVO|KG|12
             ACUCAR DE CONFEITEIRO|KG|11
             ACUCAR SACHE 5G|UNID|0.07
-            CHOCOLATE MEIO AMARGO|KG|58
-            CACAU EM PO|KG|62
-            DOCE DE LEITE|KG|23
-            MEL|KG|42
-            GELEIA DE FRUTAS VERMELHAS|KG|37""",
-        'CAFES E CHAS': """CAFE EM GRAOS TORRADO|KG|68
-            CAFE MOIDO TRADICIONAL|KG|52
-            CAFE ESPECIAL EM GRAOS|KG|96
-            CAPSULA DE CAFE|UNID|2.1
-            CHA DE CAMOMILA SACHE|UNID|0.45
-            CHA VERDE SACHE|UNID|0.48""",
+            ADOCANTE SACHE|UNID|0.09
+            MEL SILVESTRE|KG|44""",
+        'CHOCOLATES E CACAU': """CHOCOLATE EM PO 50 CACAU|KG|64
+            CACAU EM PO ALCALINO|KG|92
+            CHOCOLATE MEIO AMARGO GOTAS|KG|72
+            CHOCOLATE BRANCO GOTAS|KG|68
+            NIBS DE CACAU|KG|110""",
+        'XAROPES E CALDAS': """XAROPE DE BAUNILHA 700ML|UNID|48
+            XAROPE DE CARAMELO 700ML|UNID|48
+            XAROPE DE AVELA 700ML|UNID|52
+            CALDA DE CHOCOLATE|KG|36
+            CALDA DE CARAMELO SALGADO|KG|39
+            DOCE DE LEITE|KG|24""",
+        'GRAOS E SEMENTES': """GRANOLA SEM ACUCAR|KG|38
+            AVEIA EM FLOCOS|KG|12
+            CASTANHA DE CAJU|KG|86
+            AMENDOAS LAMINADAS|KG|118
+            CHIA|KG|34""",
+        'GELEIAS E PASTAS': """GELEIA DE FRUTAS VERMELHAS|KG|38
+            PASTA DE AMENDOIM|KG|36
+            CREME DE AVELA|KG|62
+            PASTA DE PISTACHE|KG|240
+            AZEITE EXTRA VIRGEM|LITRO|48
+            MAIONESE|KG|17""",
     },
-    'PADARIA': {
-        'PAES': """PAO FRANCES|KG|17
-            PAO DE FORMA|UNID|9.5
-            PAO DE HAMBURGUER BRIOCHE|UNID|2.3
-            PAO ITALIANO|UNID|12
-            FOCACCIA|UNID|18
-            CIABATTA|UNID|3.6
-            PAO DE QUEIJO CONGELADO|KG|26
-            CROISSANT CONGELADO|UNID|3.9""",
-        'CONFEITARIA': """BOLO DE CENOURA|UNID|38
-            TORTA DE LIMAO|UNID|62
-            BROWNIE|UNID|6.5
-            COOKIE|UNID|4.2
-            MASSA FOLHADA|KG|29""",
+    'FRIOS E PROTEINAS': {
+        'FRIOS E EMBUTIDOS': """PRESUNTO COZIDO FATIADO|KG|42
+            PEITO DE PERU DEFUMADO FATIADO|KG|68
+            SALAME ITALIANO FATIADO|KG|96
+            MORTADELA FATIADA|KG|32
+            BACON EM CUBOS|KG|46
+            PRESUNTO CRU FATIADO|KG|168""",
+        'OVOS E AVES': """OVOS BRANCOS|UNID|0.78
+            OVOS CAIPIRA|UNID|1.1
+            PEITO DE FRANGO SEM OSSO|KG|20
+            FRANGO DESFIADO TEMPERADO|KG|36
+            SALMAO DEFUMADO FATIADO|KG|240""",
+    },
+    'HORTIFRUTI': {
+        'FLV-FRUTAS': """BANANA PRATA|KG|6.4
+            MORANGO|KG|25
+            LARANJA PERA|KG|4.3
+            LIMAO TAHITI|KG|6
+            MAMAO FORMOSA|KG|6.9
+            ABACAXI PEROLA|UNID|7.6
+            FRUTAS VERMELHAS MIX|KG|48
+            MANGA PALMER|KG|8.5
+            ABACATE|KG|9.6
+            MARACUJA AZEDO|KG|11""",
+        'FLV-VERDURAS': """ALFACE AMERICANA|UNID|4.3
+            RUCULA MACO|UNID|3.7
+            MIX DE FOLHAS|KG|38
+            MANJERICAO MACO|UNID|4.5
+            HORTELA MACO|UNID|4""",
+        'FLV-LEGUMES': """TOMATE ITALIANO|KG|7.6
+            TOMATE CEREJA|KG|16
+            CEBOLA ROXA|KG|6.5
+            CENOURA|KG|5
+            PEPINO JAPONES|KG|7.2""",
     },
     'CONGELADOS': {
-        'BATATAS CONGELADAS': """BATATA PALITO CONGELADA|KG|16
-            BATATA RUSTICA CONGELADA|KG|19
-            MANDIOCA PALITO CONGELADA|KG|14
-            ANEIS DE CEBOLA EMPANADOS|KG|29""",
-        'SOBREMESAS': """SORVETE DE CREME|LITRO|21
-            SORVETE DE CHOCOLATE|LITRO|23
-            POLPA DE FRUTA|KG|17
-            PETIT GATEAU|UNID|7.9""",
-        'FRUTOS DO MAR CONGELADOS': """POLVO|KG|88
-            CAMARAO EMPANADO|KG|64""",
+        'SALGADOS CONGELADOS': """MINI PAO DE QUEIJO CONGELADO|KG|29
+            COXINHA DE FRANGO CONGELADA|UNID|3.1
+            CROQUETE DE CARNE CONGELADO|UNID|3.3
+            WAFFLE CONGELADO|UNID|3.8""",
+        'SORVETES E ACAI': """SORVETE DE CREME|LITRO|22
+            GELATO DE PISTACHE|LITRO|58
+            ACAI POLPA CONGELADA|KG|26""",
+        'POLPAS': """POLPA DE MORANGO|KG|18
+            POLPA DE MARACUJA|KG|19
+            POLPA DE MANGA|KG|17""",
     },
     'BEBIDAS': {
-        'REFRIGERANTES': """REFRIGERANTE COLA LATA 350ML|UNID|3.6
-            REFRIGERANTE GUARANA LATA 350ML|UNID|3.2
-            REFRIGERANTE LIMAO LATA 350ML|UNID|3.2
-            REFRIGERANTE ZERO LATA 350ML|UNID|3.6
-            TONICA LATA 350ML|UNID|3.9""",
-        'AGUAS': """AGUA MINERAL SEM GAS 500ML|UNID|1.4
-            AGUA MINERAL COM GAS 500ML|UNID|1.6
-            AGUA MINERAL VIDRO 300ML|UNID|2.3""",
         'SUCOS': """SUCO DE LARANJA INTEGRAL|LITRO|11
             SUCO DE UVA INTEGRAL|LITRO|14
-            AGUA DE COCO|LITRO|9.8
-            CHA GELADO LATA|UNID|4.4""",
-        'CERVEJAS': """CERVEJA PILSEN CHOPP BARRIL 50L|UNID|420
-            CERVEJA PILSEN LONG NECK 355ML|UNID|4.6
-            CERVEJA PILSEN GARRAFA 600ML|UNID|7.2
-            CERVEJA IPA LONG NECK 355ML|UNID|8.9
-            CERVEJA SEM ALCOOL LATA 350ML|UNID|4.1
-            CERVEJA WEISS GARRAFA 500ML|UNID|11""",
-        'DESTILADOS': """CACHACA ENVELHECIDA 700ML|UNID|62
-            VODKA NACIONAL 1L|UNID|48
-            GIN NACIONAL 750ML|UNID|79
-            RUM BRANCO 1L|UNID|52
-            LICOR DE LARANJA 750ML|UNID|88
-            APERITIVO AMARO 750ML|UNID|64""",
-    },
-    'VINHOS': {
-        'VINHOS TINTOS': """VINHO TINTO MALBEC 750ML|UNID|62
-            VINHO TINTO CABERNET 750ML|UNID|58
-            VINHO TINTO MERLOT 750ML|UNID|54
-            VINHO TINTO SANGIOVESE 750ML|UNID|89
-            VINHO TINTO TEMPRANILLO 750ML|UNID|71
-            VINHO TINTO DA CASA 5L|UNID|96""",
-        'VINHOS BRANCOS': """VINHO BRANCO SAUVIGNON BLANC 750ML|UNID|56
-            VINHO BRANCO CHARDONNAY 750ML|UNID|61
-            VINHO BRANCO PINOT GRIGIO 750ML|UNID|67""",
-        'ESPUMANTES': """ESPUMANTE BRUT 750ML|UNID|52
-            ESPUMANTE MOSCATEL 750ML|UNID|44
-            PROSECCO 750ML|UNID|74""",
-        'VINHOS ROSES': """VINHO ROSE 750ML|UNID|57""",
+            SUCO VERDE PRENSADO 300ML|UNID|9.8
+            AGUA DE COCO|LITRO|9.9""",
+        'AGUAS': """AGUA MINERAL SEM GAS 500ML|UNID|1.5
+            AGUA MINERAL COM GAS 500ML|UNID|1.7
+            AGUA MINERAL VIDRO 300ML|UNID|2.4""",
+        'REFRIGERANTES': """REFRIGERANTE COLA LATA 350ML|UNID|3.7
+            REFRIGERANTE ZERO LATA 350ML|UNID|3.7
+            REFRIGERANTE GUARANA LATA 350ML|UNID|3.3
+            TONICA LATA 350ML|UNID|4""",
+        'CHAS GELADOS E KOMBUCHA': """CHA GELADO DE PESSEGO LATA|UNID|4.5
+            KOMBUCHA GARRAFA 355ML|UNID|9.6
+            ENERGETICO LATA 250ML|UNID|7.4""",
     },
     'PRODUCAO CENTRAL': {
         'INSUMOS DE PRODUCAO': """ETIQUETA DE VALIDADE|UNID|0.09
-            SACO A VACUO|UNID|0.42""",
+            SACO VALVULADO PARA CAFE 1KG|UNID|1.6""",
     },
     'REFEICAO FUNCIONARIOS': {
         'REFEICOES': """MARMITA REFEICAO FUNCIONARIO|UNID|17""",
@@ -303,89 +253,109 @@ CATALOGO = {
     },
     # ---- grupos "nao produto" (excluidos das analises de compra de insumos, como no portal original) ----
     'DESCARTAVEIS': {
-        'EMBALAGENS': """EMBALAGEM DELIVERY KRAFT|UNID|1.3
-            COPO DESCARTAVEL 300ML|UNID|0.16
+        'COPOS E TAMPAS': """COPO DE PAPEL 240ML|UNID|0.32
+            COPO DE PAPEL 360ML|UNID|0.38
+            COPO DE PAPEL 480ML|UNID|0.44
+            TAMPA PARA COPO DE PAPEL|UNID|0.18
+            COPO PET 500ML PARA GELADOS|UNID|0.36
+            LUVA TERMICA PARA COPO|UNID|0.12
+            PORTA COPOS DE PAPELAO 2 LUGARES|UNID|0.85
+            MEXEDOR DE MADEIRA|UNID|0.03""",
+        'EMBALAGENS': """SACO KRAFT PARA PAES|UNID|0.22
+            CAIXA PARA BOLO|UNID|2.4
+            EMBALAGEM DELIVERY KRAFT|UNID|1.3
             GUARDANAPO DE PAPEL|UNID|0.03
-            PAPEL FILME PVC|UNID|39
-            PAPEL ALUMINIO ROLO|UNID|46
             CANUDO DE PAPEL|UNID|0.06
-            SACOLA KRAFT|UNID|0.9""",
+            FILTRO DE PAPEL PARA COADOR|UNID|0.09
+            PAPEL FILME PVC|UNID|39""",
     },
     'CONSUMO': {
-        'LIMPEZA': """DETERGENTE NEUTRO|LITRO|6.4
-            DESENGORDURANTE|LITRO|19
+        'LIMPEZA': """PASTILHA DE LIMPEZA PARA MAQUINA DE ESPRESSO|UNID|2.9
+            DETERGENTE PARA LIMPEZA DE LEITEIRA|LITRO|38
+            DESCALCIFICANTE PARA MAQUINA|LITRO|52
+            DETERGENTE NEUTRO|LITRO|6.5
             ALCOOL 70|LITRO|11
-            PANO MULTIUSO|UNID|1.9
-            SACO DE LIXO 100L|UNID|0.85
-            LUVA NITRILICA|UNID|0.48""",
+            PANO DE MICROFIBRA|UNID|4.9
+            SACO DE LIXO 100L|UNID|0.86""",
     },
     'UTENSILIOS': {
-        'COZINHA': """FACA DO CHEF|UNID|189
-            TABUA DE CORTE|UNID|96
-            PANELA INOX 10L|UNID|420
-            ASSADEIRA ALUMINIO|UNID|78
-            TACA DE VINHO|UNID|24
-            PRATO RASO PORCELANA|UNID|36""",
+        'BARISTA E SALAO': """JARRA LEITEIRA INOX 600ML|UNID|96
+            TAMPER INOX|UNID|180
+            XICARA DE PORCELANA PARA ESPRESSO|UNID|28
+            XICARA DE PORCELANA PARA CAPPUCCINO|UNID|34
+            BALANCA DE PRECISAO PARA BARISTA|UNID|260
+            COADOR DE VIDRO|UNID|145""",
     },
     'MANUTENCAO': {
-        'REPAROS': """MANUTENCAO DE COIFA|UNID|1450
-            REPARO ELETRICO|UNID|680
-            MANUTENCAO DE CAMARA FRIA|UNID|2100
-            LAMPADA LED|UNID|19
-            PINTURA DE SALAO|UNID|3800""",
+        'REPAROS': """MANUTENCAO PREVENTIVA MAQUINA DE ESPRESSO|UNID|980
+            TROCA DE BORRACHAS DO GRUPO|UNID|420
+            REFIL DE FILTRO DE AGUA|UNID|380
+            REPARO DE MOEDOR|UNID|640
+            MANUTENCAO DE VITRINE REFRIGERADA|UNID|1250
+            REPARO ELETRICO|UNID|690
+            LAMPADA LED|UNID|19""",
     },
     'MAQUINAS E EQUIPAMENTOS': {
-        'EQUIPAMENTOS': """LIQUIDIFICADOR INDUSTRIAL|UNID|1890
-            FORNO COMBINADO PECA REPOSICAO|UNID|2600
-            BALANCA DIGITAL|UNID|540
-            SELADORA A VACUO|UNID|3200""",
+        'EQUIPAMENTOS': """MOEDOR DE CAFE PROFISSIONAL|UNID|9800
+            MAQUINA DE ESPRESSO PECA DE REPOSICAO|UNID|2400
+            LIQUIDIFICADOR PROFISSIONAL|UNID|1950
+            FORNO TURBO ELETRICO|UNID|6900
+            SANDUICHEIRA PROFISSIONAL|UNID|1450""",
     },
     'SERVICOS': {
         'SERVICOS GERAIS': """DEDETIZACAO|UNID|980
-            LAVANDERIA DE ENXOVAL|UNID|1650
-            COLETA DE OLEO USADO|UNID|240
-            AFIACAO DE FACAS|UNID|180""",
+            LAVANDERIA DE UNIFORMES|UNID|720
+            ANALISE DE AGUA|UNID|340
+            TREINAMENTO DE BARISTAS|UNID|1800
+            COLETA DE BORRA DE CAFE PARA COMPOSTAGEM|UNID|260""",
     },
 }
 
+# Popularidade fixa dos itens de maior giro (os demais sorteiam uma lognormal com mediana 1)
+ITENS_DE_GIRO = {
+    'CAFE ESPECIAL BLEND ESPRESSO GRAOS': 9.0, 'CAFE TORRADO BLEND TRADICIONAL GRAOS': 4.0, 'CAFE VERDE ARABICA FINO': 6.0,
+    'CAFE VERDE ARABICA BICA CORRIDA': 4.0, 'LEITE INTEGRAL BARISTA': 9.0, 'LEITE INTEGRAL': 6.0,
+    'LEITE SEM LACTOSE': 2.5, 'BEBIDA DE AVEIA BARISTA': 5.0, 'MANTEIGA SEM SAL': 4.0, 'CREME DE LEITE FRESCO': 3.0,
+    'QUEIJO MUSSARELA FATIADO': 3.0, 'PAO DE QUEIJO CONGELADO': 7.0, 'CROISSANT DE MANTEIGA CONGELADO': 6.0,
+    'PAO NA CHAPA FRANCES': 4.0, 'BOLO DE CENOURA COM CHOCOLATE': 4.0, 'COOKIE DE CHOCOLATE': 4.0, 'BROWNIE': 3.0,
+    'FARINHA DE TRIGO TIPO 1': 5.0, 'ACUCAR REFINADO': 4.0, 'ACUCAR SACHE 5G': 4.0, 'CHOCOLATE EM PO 50 CACAU': 3.0,
+    'XAROPE DE CARAMELO 700ML': 2.5, 'COPO DE PAPEL 240ML': 6.0, 'COPO DE PAPEL 360ML': 6.0, 'TAMPA PARA COPO DE PAPEL': 7.0,
+    'OVOS BRANCOS': 4.0, 'BANANA PRATA': 3.0, 'MORANGO': 3.0, 'SUCO DE LARANJA INTEGRAL': 4.0,
+    'AGUA MINERAL SEM GAS 500ML': 4.0,
+}
+
 GRUPOS_NAO_PRODUTO = {'DESCARTAVEIS', 'CONSUMO', 'UTENSILIOS', 'MANUTENCAO', 'MAQUINAS E EQUIPAMENTOS', 'SERVICOS'}
-GRUPO_GERENCIAL = {'BEBIDAS': 'BEBIDAS', 'VINHOS': 'VINHOS'}
-# Itens produzidos pela central e faturados para as casas (fornecedor intercompany, excluido das analises)
-ITENS_CENTRAL = """MOLHO DE TOMATE DA CASA|KG|14
-    MASSA FRESCA DA CASA|KG|19
-    CALDO DE CARNE DA CASA|LITRO|12
-    PAO DE FERMENTACAO NATURAL DA CASA|UNID|9""".split('\n')
+GRUPO_GERENCIAL = {'BEBIDAS': 'BEBIDAS', 'CAFES': 'CAFES'}
+# Itens produzidos pela central e faturados para as lojas (fornecedor intercompany, excluido das analises)
+ITENS_CENTRAL = """PAO DE QUEIJO DA CASA CONGELADO|KG|21
+    BOLO DA CASA INTEIRO|UNID|28
+    COOKIE DA CASA|UNID|2.6
+    MASSA DE CROISSANT DA CASA|KG|32""".split('\n')
 
 # Familias de commodity (mesmas regras da pagina de Commodities): o choque mensal de preco de cada familia e' usado nas
 # notas e, com ruido, no IPCA sintetico da familia — por isso o preco pago e o IPCA "andam juntos" de forma plausivel.
+# Os codigos sao so chaves do arquivo sintetico indices-mercado.json.
 FAMILIAS = {
-    'carne_bovina': (7283, 'Carnes'), 'suino': (7287, 'Carne de porco'), 'frango': (107618, 'Frango em pedaços'),
-    'leite_derivados': (7356, 'Leite e derivados'), 'trigo': (7184, 'Farinhas, féculas e massas'),
-    'oleos_azeite': (7384, 'Óleos e gorduras'), 'cafe': (7392, 'Café moído'), 'acucar': (7220, 'Açúcares e derivados'),
-    'hortifruti': (7200, 'Tubérculos, raízes e legumes'),
+    'cafe': (7392, 'Café moído'), 'leite_derivados': (7356, 'Leite e derivados'),
+    'trigo': (7184, 'Farinhas, féculas e massas'), 'acucar': (7220, 'Açúcares e derivados'),
+    'cacau': (7243, 'Chocolate e achocolatado'), 'frutas': (7214, 'Frutas'),
 }
 IPCA_GERAL, IPCA_ALIMENTACAO = 7169, 7170
 
 
 def familia_do_item(nome, subgrupo, grupo, um):
-    if subgrupo == 'BOVINOS':
-        return 'carne_bovina'
-    if subgrupo == 'SUINOS':
-        return 'suino'
-    if subgrupo == 'AVES':
-        return 'frango'
-    if grupo == 'LATICINIOS':
-        return 'leite_derivados'
-    if subgrupo in ('FARINACEOS', 'MASSAS'):
-        return 'trigo'
-    if subgrupo == 'OLEOS':
-        return 'oleos_azeite'
-    if nome.startswith('CAFE') and um == 'KG':
+    if subgrupo in ('CAFES ESPECIAIS', 'CAFES TRADICIONAIS', 'CAFE VERDE') and um == 'KG':
         return 'cafe'
+    if subgrupo in ('LEITES', 'QUEIJOS', 'CREMES E MANTEIGAS'):
+        return 'leite_derivados'
+    if subgrupo == 'FARINACEOS' and nome.startswith('FARINHA DE TRIGO'):
+        return 'trigo'
     if nome.startswith('ACUCAR') and um == 'KG':
         return 'acucar'
-    if subgrupo == 'FLV-LEGUMES' and nome.split()[0] in ('TOMATE', 'BATATA', 'CEBOLA') and 'DOCE' not in nome:
-        return 'hortifruti'
+    if subgrupo == 'CHOCOLATES E CACAU':
+        return 'cacau'
+    if subgrupo == 'FLV-FRUTAS':
+        return 'frutas'
     return None
 
 
@@ -394,36 +364,35 @@ def familia_do_item(nome, subgrupo, grupo, um):
 # =====================================================================================================================
 ESPECIALIDADES = {
     # especialidade: (subgrupos atendidos, quantidade de fornecedores, prefixos de razao social)
-    'carnes': (['BOVINOS', 'SUINOS'], 10, ['FRIGORIFICO', 'CARNES', 'CASA DE CARNES']),
-    'aves': (['AVES'], 5, ['AVICOLA', 'GRANJA']),
-    'pescados': (['PESCADOS', 'FRUTOS DO MAR CONGELADOS'], 6, ['PESCADOS', 'COMERCIO DE PESCADOS']),
-    'flv': (['FLV-LEGUMES', 'FLV-FRUTAS', 'FLV-VERDURAS'], 10, ['HORTIFRUTI', 'CEREALISTA', 'DISTRIBUIDORA DE HORTALICAS']),
-    'laticinios': (['QUEIJOS', 'LACTEOS'], 9, ['LATICINIOS', 'QUEIJARIA', 'DISTRIBUIDORA DE FRIOS']),
-    'mercearia': (['FARINACEOS', 'MASSAS', 'OLEOS', 'GRAOS', 'CONSERVAS', 'TEMPEROS', 'ACUCARES E DOCES', 'CAFES E CHAS'],
-                  16, ['ATACADISTA', 'DISTRIBUIDORA', 'COMERCIAL', 'EMPORIO']),
-    'cafe': (['CAFES E CHAS'], 3, ['TORREFACAO', 'CAFES']),
-    'padaria': (['PAES', 'CONFEITARIA'], 7, ['PANIFICADORA', 'CONFEITARIA', 'PADARIA']),
-    'congelados': (['BATATAS CONGELADAS', 'SOBREMESAS', 'FRUTOS DO MAR CONGELADOS'], 5, ['CONGELADOS', 'SORVETES']),
-    'bebidas': (['REFRIGERANTES', 'AGUAS', 'SUCOS', 'CERVEJAS'], 9, ['DISTRIBUIDORA DE BEBIDAS', 'BEBIDAS']),
-    'cervejaria': (['CERVEJAS'], 3, ['CERVEJARIA']),
-    'destilados': (['DESTILADOS'], 4, ['DESTILARIA', 'IMPORTADORA DE BEBIDAS']),
-    'vinhos': (['VINHOS TINTOS', 'VINHOS BRANCOS', 'ESPUMANTES', 'VINHOS ROSES'], 10, ['IMPORTADORA DE VINHOS', 'VINICOLA', 'ADEGA']),
+    'torrefacao': (['CAFES ESPECIAIS', 'CAFES TRADICIONAIS'], 8, ['TORREFACAO', 'CAFES', 'TORREFADORA']),
+    'cafe_verde': (['CAFE VERDE'], 4, ['COOPERATIVA DE CAFEICULTORES', 'FAZENDA', 'EXPORTADORA DE CAFE']),
+    'chas': (['CHAS E INFUSOES'], 3, ['CHAS', 'IMPORTADORA DE CHAS']),
+    'laticinios': (['LEITES', 'QUEIJOS', 'CREMES E MANTEIGAS'], 9, ['LATICINIOS', 'QUEIJARIA', 'DISTRIBUIDORA DE FRIOS']),
+    'vegetais': (['BEBIDAS VEGETAIS'], 3, ['ALIMENTOS VEGETAIS', 'NATURAIS']),
+    'padaria': (['PAES', 'SALGADOS ASSADOS'], 7, ['PANIFICADORA', 'PADARIA', 'FORNO']),
+    'confeitaria': (['BOLOS E TORTAS', 'DOCES E BISCOITOS'], 7, ['CONFEITARIA', 'DOCERIA', 'PATISSERIE']),
+    'mercearia': (['FARINACEOS', 'ACUCARES E ADOCANTES', 'CHOCOLATES E CACAU', 'XAROPES E CALDAS', 'GRAOS E SEMENTES',
+                   'GELEIAS E PASTAS'], 14, ['ATACADISTA', 'DISTRIBUIDORA', 'COMERCIAL', 'EMPORIO']),
+    'frios': (['FRIOS E EMBUTIDOS', 'OVOS E AVES'], 5, ['FRIOS', 'GRANJA', 'DISTRIBUIDORA DE FRIOS']),
+    'flv': (['FLV-FRUTAS', 'FLV-VERDURAS', 'FLV-LEGUMES'], 7, ['HORTIFRUTI', 'FRUTAS', 'DISTRIBUIDORA DE HORTALICAS']),
+    'congelados': (['SALGADOS CONGELADOS', 'SORVETES E ACAI', 'POLPAS'], 5, ['CONGELADOS', 'SORVETES', 'POLPAS']),
+    'bebidas': (['SUCOS', 'AGUAS', 'REFRIGERANTES', 'CHAS GELADOS E KOMBUCHA'], 8, ['DISTRIBUIDORA DE BEBIDAS', 'BEBIDAS']),
     'producao': (['INSUMOS DE PRODUCAO', 'REFEICOES', 'TRANSFERENCIAS'], 3, ['SUPRIMENTOS', 'COZINHA INDUSTRIAL']),
-    'descartaveis': (['EMBALAGENS'], 8, ['EMBALAGENS', 'DESCARTAVEIS']),
-    'limpeza': (['LIMPEZA'], 6, ['PRODUTOS DE LIMPEZA', 'HIGIENE']),
-    'utensilios': (['COZINHA'], 6, ['UTILIDADES', 'EQUIPAMENTOS PARA COZINHA']),
-    'manutencao': (['REPAROS'], 14, ['MANUTENCAO', 'ENGENHARIA', 'REFRIGERACAO', 'INSTALACOES']),
-    'equipamentos': (['EQUIPAMENTOS'], 7, ['MAQUINAS', 'EQUIPAMENTOS']),
-    'servicos': (['SERVICOS GERAIS'], 14, ['SERVICOS', 'LAVANDERIA', 'CONTROLE DE PRAGAS', 'AMBIENTAL']),
+    'descartaveis': (['COPOS E TAMPAS', 'EMBALAGENS'], 9, ['EMBALAGENS', 'DESCARTAVEIS']),
+    'limpeza': (['LIMPEZA'], 5, ['PRODUTOS DE LIMPEZA', 'HIGIENE']),
+    'utensilios': (['BARISTA E SALAO'], 5, ['UTILIDADES', 'ACESSORIOS PARA BARISTA']),
+    'manutencao': (['REPAROS'], 12, ['MANUTENCAO', 'ASSISTENCIA TECNICA', 'REFRIGERACAO', 'INSTALACOES']),
+    'equipamentos': (['EQUIPAMENTOS'], 6, ['MAQUINAS', 'EQUIPAMENTOS']),
+    'servicos': (['SERVICOS GERAIS'], 12, ['SERVICOS', 'LAVANDERIA', 'CONTROLE DE PRAGAS', 'AMBIENTAL']),
 }
 
 # Fornecedores "ancora" com variacoes de grafia na base bruta — exercitam a padronizacao de nomes de
 # shared_py/etl_common.py (_MAPA_EXATO e a regra por substring). Os nomes sao inventados.
 ANCORAS = {
-    'carnes': ('FRIGORIFICO BARILO S/A', ['FRIGORIFICO BARILO S A', 'FRIGORIFICO BARILO SA - FILIAL 2']),
+    'torrefacao': ('TORREFACAO BARILO S/A', ['TORREFACAO BARILO S A', 'TORREFACAO BARILO SA - FILIAL 2']),
     'mercearia': ('DISTRIBUIDORA VETAMON LTDA', ['DISTRIB. VETAMON LTDA', 'DISTRIBUIDORA VETAMON LTDA.']),
     'laticinios': ('LATICINIOS QUIRANA LTDA', ['LATICINIOS QUIRANA LTDA - MATRIZ']),
-    'cervejaria': ('CERVEJARIA LUPULAR S/A', ['LUPULAR BEBIDAS DO SUDESTE LTDA', 'CERVEJARIA LUPULAR S.A. FILIAL RJ']),
+    'bebidas': ('BEBIDAS LUPULAR S/A', ['LUPULAR BEBIDAS DO SUDESTE LTDA', 'BEBIDAS LUPULAR S.A. FILIAL RJ']),
     'flv': ('HORTIFRUTI SARVEDO LTDA', ['Hortifruti Sarvedo Ltda']),
 }
 
@@ -464,8 +433,13 @@ def montar_itens():
                               'cod': cod, 'familia': familia_do_item(nome, sub, grupo, um)})
     for it in itens:
         it['popularidade'] = float(rng.lognormal(0, 1.15))
+        # itens que movem uma cafeteria (espresso, leite, pao de queijo, copos) tem giro alto em qualquer fornecedor
+        if it['nome'] in ITENS_DE_GIRO:
+            it['popularidade'] = ITENS_DE_GIRO[it['nome']]
         # quantidade tipica por linha de nota: itens caros saem em quantidades menores
         it['q0'] = float(np.clip(380 / it['preco'], 1, 90))
+        if it['grupo'] == 'DESCARTAVEIS':            # copos, tampas e sacos saem aos milhares
+            it['q0'] = float(np.clip(700 / it['preco'], 1, 1800))
         if it['grupo'] in GRUPOS_NAO_PRODUTO and it['preco'] > 150:
             it['q0'] = 1.0
         # tendencia mensal de preco: alta, queda ou estavel
@@ -543,24 +517,24 @@ def montar_fornecedores(itens):
     return fornecedores
 
 
-# Mix de compra por vertical (peso de cada especialidade nas notas da casa)
+# Mix de compra por formato de loja (peso de cada especialidade nas notas da loja)
 MIX = {
-    'RESTAURANTE': {'carnes': 15, 'aves': 5, 'pescados': 7, 'flv': 12, 'laticinios': 9, 'mercearia': 16, 'cafe': 1.5,
-                    'padaria': 4, 'congelados': 3, 'bebidas': 8, 'cervejaria': 2.5, 'destilados': 2, 'vinhos': 7,
-                    'producao': 0.6, 'descartaveis': 3, 'limpeza': 2.5, 'utensilios': 1, 'manutencao': 1.6,
-                    'equipamentos': 0.5, 'servicos': 1.6},
-    'BAR': {'carnes': 9, 'aves': 6, 'pescados': 3, 'flv': 8, 'laticinios': 6, 'mercearia': 11, 'cafe': 0.6,
-            'padaria': 4, 'congelados': 6, 'bebidas': 17, 'cervejaria': 12, 'destilados': 7, 'vinhos': 2,
-            'producao': 0.5, 'descartaveis': 3, 'limpeza': 2.5, 'utensilios': 1, 'manutencao': 1.6,
-            'equipamentos': 0.5, 'servicos': 1.5},
-    'CAFETERIA': {'carnes': 1, 'aves': 3, 'pescados': 0.3, 'flv': 9, 'laticinios': 14, 'mercearia': 13, 'cafe': 14,
-                  'padaria': 17, 'congelados': 4, 'bebidas': 7, 'cervejaria': 0.3, 'destilados': 0.2, 'vinhos': 0.6,
-                  'producao': 0.4, 'descartaveis': 6, 'limpeza': 2.5, 'utensilios': 1, 'manutencao': 1.2,
+    'CAFETERIA': {'torrefacao': 16, 'cafe_verde': 0, 'chas': 2.5, 'laticinios': 16, 'vegetais': 3, 'padaria': 13,
+                  'confeitaria': 12, 'mercearia': 11, 'frios': 3, 'flv': 4, 'congelados': 3, 'bebidas': 5,
+                  'producao': 0.4, 'descartaveis': 7, 'limpeza': 2.5, 'utensilios': 1, 'manutencao': 1.8,
                   'equipamentos': 0.4, 'servicos': 1.2},
-    'PRODUCAO CENTRAL': {'carnes': 22, 'aves': 7, 'pescados': 6, 'flv': 16, 'laticinios': 10, 'mercearia': 22, 'cafe': 0.2,
-                         'padaria': 1, 'congelados': 2, 'bebidas': 0.3, 'cervejaria': 0, 'destilados': 0, 'vinhos': 0.2,
-                         'producao': 2.5, 'descartaveis': 4, 'limpeza': 3, 'utensilios': 1.2, 'manutencao': 2,
-                         'equipamentos': 1, 'servicos': 1.8},
+    'QUIOSQUE': {'torrefacao': 19, 'cafe_verde': 0, 'chas': 2, 'laticinios': 15, 'vegetais': 3.5, 'padaria': 9,
+                 'confeitaria': 10, 'mercearia': 8, 'frios': 0.6, 'flv': 1, 'congelados': 2, 'bebidas': 8,
+                 'producao': 0.3, 'descartaveis': 13, 'limpeza': 2, 'utensilios': 0.6, 'manutencao': 1.6,
+                 'equipamentos': 0.3, 'servicos': 0.8},
+    'BISTRO': {'torrefacao': 11, 'cafe_verde': 0, 'chas': 2, 'laticinios': 15, 'vegetais': 2.5, 'padaria': 12,
+               'confeitaria': 9, 'mercearia': 12, 'frios': 9, 'flv': 10, 'congelados': 3, 'bebidas': 6,
+               'producao': 0.5, 'descartaveis': 4, 'limpeza': 2.5, 'utensilios': 1, 'manutencao': 1.6,
+               'equipamentos': 0.5, 'servicos': 1.4},
+    'PRODUCAO CENTRAL': {'torrefacao': 1, 'cafe_verde': 22, 'chas': 0.2, 'laticinios': 18, 'vegetais': 0, 'padaria': 1,
+                         'confeitaria': 1, 'mercearia': 30, 'frios': 6, 'flv': 6, 'congelados': 1, 'bebidas': 0.2,
+                         'producao': 3, 'descartaveis': 4, 'limpeza': 3, 'utensilios': 1, 'manutencao': 2,
+                         'equipamentos': 1.2, 'servicos': 1.8},
 }
 FATOR_REGIAO = {'SP': 1.0, 'RJ': 1.035, 'BR': 0.975}
 
@@ -568,10 +542,11 @@ FATOR_REGIAO = {'SP': 1.0, 'RJ': 1.035, 'BR': 0.975}
 def caminho_precos(itens):
     """Fator de preco por item e mes: tendencia propria + choque mensal da familia + sazonalidade do hortifruti."""
     choques = {fam: rng.normal(0.004, 0.018, len(MESES)) for fam in FAMILIAS}
-    choques['carne_bovina'] += 0.012                 # ciclo de alta da arroba no periodo
-    choques['cafe'] += np.linspace(0.03, -0.01, len(MESES))
-    choques['hortifruti'] += 0.06 * np.sin(np.linspace(0, 2.4 * math.pi, len(MESES)))
-    choques['oleos_azeite'] -= 0.008
+    choques['cafe'] += np.linspace(0.045, -0.012, len(MESES))        # arabica em alta forte no 1o semestre, acomodando
+    choques['cacau'] += np.linspace(0.03, -0.035, len(MESES))        # cacau devolvendo parte da alta historica
+    choques['leite_derivados'] += np.array([-0.004, -0.004, 0.0, 0.006, 0.014, 0.022, 0.018, 0.006])  # entressafra
+    choques['frutas'] += 0.05 * np.sin(np.linspace(0, 2.2 * math.pi, len(MESES)))
+    choques['acucar'] -= 0.006
     for it in itens:
         fator = [1.0]
         fam_choque = choques.get(it['familia'])
@@ -595,7 +570,7 @@ def gerar_notas(itens, fornecedores):
     raiz_grupo = 98765432
     for i, c in enumerate(casas):
         marca = ' '.join(c['fantasia'].split()[:2])
-        destinatarios[c['fantasia']] = (f'{marca} GASTRONOMIA LTDA' if c is not CENTRAL else FORNECEDOR_INTERCOMPANY,
+        destinatarios[c['fantasia']] = (f'{marca} COMERCIO DE ALIMENTOS LTDA' if c is not CENTRAL else FORNECEDOR_INTERCOMPANY,
                                         cnpj_ficticio(raiz_grupo, i + 1))
     fator_casa = {c['fantasia']: float(rng.uniform(0.97, 1.04)) * FATOR_REGIAO[c['regiao']] for c in casas}
 
@@ -625,7 +600,7 @@ def gerar_notas(itens, fornecedores):
                 escolhidos = rng.choice(len(f['itens']), size=k, replace=False, p=pop / pop.sum())
                 pedidos.append({'casa': c, 'forn': f, 'emissao': emissao, 'mi': mi,
                                 'itens': [f['itens'][j] for j in escolhidos]})
-    # intercompany: a central fatura producao propria para as casas (removido das analises pelo ETL)
+    # intercompany: a central fatura producao propria (paes, bolos, massas) para as lojas (removido das analises pelo ETL)
     itens_central = []
     for linha in ITENS_CENTRAL:
         nome, um, preco = [x.strip() for x in linha.strip().split('|')]
@@ -637,7 +612,7 @@ def gerar_notas(itens, fornecedores):
                     'p_prazo': 1.0, 'p_completo': 1.0, 'pmp': 30, 'uf': 'SP'}
     for mi, mes in enumerate(MESES):
         for c in CASAS:
-            if c['vertical'] == 'CAFETERIA' or (c['abertura'] and mes < c['abertura']):
+            if c['abertura'] and mes < c['abertura']:
                 continue
             for _ in range(rng.poisson(6 * c['porte'])):
                 pedidos.append({'casa': c, 'forn': forn_central, 'mi': mi, 'itens': itens_central[:int(rng.integers(1, 5))],
@@ -681,7 +656,7 @@ def gerar_notas(itens, fornecedores):
             um, desc_forn = it['um'], it['nome']
             if it['um'] == 'KG':
                 qtd = round(max(qtd, 0.3), 3)
-                desc_forn = f"{it['nome']} {rng.choice(['KG', 'PECA', 'A GRANEL', 'RESFRIADO'] if it['grupo'] == 'PROTEINAS' else ['KG', 'PCT 1KG', 'SC 5KG', 'A GRANEL'])}"
+                desc_forn = f"{it['nome']} {rng.choice(['KG', 'PCT 500G', 'PCT 1KG', 'A GRANEL'] if it['grupo'] in ('CAFES', 'FRIOS E PROTEINAS') else ['KG', 'PCT 1KG', 'SC 5KG', 'A GRANEL'])}"
             else:
                 qtd = max(1, int(round(qtd)))
             # segunda unidade (caixa): preco e quantidade da caixa
@@ -699,15 +674,15 @@ def gerar_notas(itens, fornecedores):
                 desc_forn = f"{it['nome']} CX C/{fator}"
             elif rng.random() < 0.004:
                 preco = preco * float(rng.choice([4.5, 0.2]))
-            if it['nome'] == 'FILE MIGNON BOVINO PECA' and rng.random() < 0.35:
-                nome_item = str(rng.choice(['FILE MIGNON BOVINO', '(MP) FILE MIGNON BOVINO PECA']))
+            if it['nome'] == 'CAFE ESPECIAL BLEND ESPRESSO GRAOS' and rng.random() < 0.35:
+                nome_item = str(rng.choice(['CAFE BLEND ESPRESSO GRAOS', '(MP) CAFE ESPECIAL BLEND ESPRESSO GRAOS']))
             else:
                 nome_item = it['nome']
             grupo = it['grupo']
             if grupo == 'MERCEARIA' and rng.random() < 0.2:
                 grupo = 'MERCEARIA SECA'           # variante de cadastro, unificada pelo ETL
-            if nome_item == 'POLVO':
-                grupo = 'CONGELADOS'               # reclassificado para PROTEINAS/PESCADOS pelo ETL
+            if nome_item == 'CREME CHANTILLY':
+                grupo = 'CONGELADOS'               # cadastro errado, reclassificado para LATICINIOS pelo ETL
             if rng.random() < 0.003:
                 qtd = 0                            # complemento de preco (sem quantidade)
             v_total = round(preco * qtd, 2) if qtd else round(preco * rng.uniform(1, 6), 2)
@@ -768,14 +743,14 @@ def gerar_complemento(fornecedores):
     return pd.DataFrame(linhas)
 
 
-DEMANDA_POR_ESP = {'carnes': 'PROTEINAS', 'aves': 'PROTEINAS', 'pescados': 'PROTEINAS', 'flv': 'HORTIFRUTI',
-                   'laticinios': 'LATICINIOS', 'mercearia': 'MERCEARIA', 'cafe': 'MERCEARIA', 'padaria': 'PADARIA',
-                   'congelados': 'CONGELADOS', 'bebidas': 'BEBIDAS', 'cervejaria': 'BEBIDAS', 'destilados': 'BEBIDAS',
-                   'vinhos': 'VINHOS', 'descartaveis': 'MATERIAIS', 'limpeza': 'MATERIAIS'}
-COMPRADOR_POR_DEMANDA = {'PROTEINAS': ['ANA PAULA', 'BRUNO COSTA'], 'HORTIFRUTI': ['CARLA MENDES'],
-                         'LATICINIOS': ['CARLA MENDES', 'DIEGO'], 'MERCEARIA': ['DIEGO', 'ELISA RAMOS'],
-                         'PADARIA': ['ELISA RAMOS'], 'CONGELADOS': ['BRUNO COSTA'], 'BEBIDAS': ['GABRIEL'],
-                         'VINHOS': ['GABRIEL'], 'MATERIAIS': ['COMPRAS APOIO'], 'CPQ': ['COMPRAS CPQ']}
+DEMANDA_POR_ESP = {'torrefacao': 'CAFES', 'cafe_verde': 'CAFES', 'chas': 'CAFES', 'laticinios': 'LATICINIOS',
+                   'vegetais': 'LATICINIOS', 'padaria': 'PADARIA E CONFEITARIA', 'confeitaria': 'PADARIA E CONFEITARIA',
+                   'mercearia': 'MERCEARIA', 'frios': 'FRIOS E HORTIFRUTI', 'flv': 'FRIOS E HORTIFRUTI',
+                   'congelados': 'CONGELADOS', 'bebidas': 'BEBIDAS', 'descartaveis': 'DESCARTAVEIS', 'limpeza': 'MATERIAIS'}
+COMPRADOR_POR_DEMANDA = {'CAFES': ['ANA PAULA', 'BRUNO COSTA'], 'LATICINIOS': ['CARLA MENDES'],
+                         'PADARIA E CONFEITARIA': ['ELISA RAMOS', 'DIEGO'], 'MERCEARIA': ['DIEGO', 'ELISA RAMOS'],
+                         'FRIOS E HORTIFRUTI': ['CARLA MENDES'], 'CONGELADOS': ['BRUNO COSTA'], 'BEBIDAS': ['GABRIEL'],
+                         'DESCARTAVEIS': ['GABRIEL'], 'MATERIAIS': ['COMPRAS APOIO'], 'CPQ': ['COMPRAS CPQ']}
 SITUACOES_INCOMPLETAS = ['Entrega Parcial (Produtos Faltantes)', 'Entrega com Divergência de Quantidade',
                          'Entrega com Produto Avariado']
 MESES_ABREV = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
@@ -823,25 +798,25 @@ def gerar_otif(pedidos, notas):
 def gerar_cmc_cmv(notas):
     n = notas.copy()
     n['MES'] = pd.to_datetime(n['DATA LANCAMENTO']).dt.strftime('%Y-%m')
-    n['CAT'] = np.select([n['GRUPO'] == 'VINHOS', n['GRUPO'] == 'BEBIDAS', n['GRUPO'].isin(GRUPOS_NAO_PRODUTO)],
-                         ['vinhos', 'bebidas', 'outros'], 'alimentos')
+    n['CAT'] = np.select([n['GRUPO'] == 'CAFES', n['GRUPO'] == 'BEBIDAS', n['GRUPO'].isin(GRUPOS_NAO_PRODUTO)],
+                         ['cafes', 'bebidas', 'outros'], 'alimentos')
     inter = n['RAZAO FORNECEDOR'] == FORNECEDOR_INTERCOMPANY
     compras = n[~inter].groupby(['CASAS', 'MES', 'CAT'])['V. CONTABIL NF'].sum()
     producao = n[inter].groupby(['CASAS', 'MES'])['V. CONTABIL NF'].sum()
-    meta_casa = {c['fantasia']: float(rng.normal(0.33, 0.024)) for c in CASAS}
+    meta_casa = {c['fantasia']: float(rng.normal(0.34, 0.024)) for c in CASAS}   # CMC de alimentos (inclui leites)
     cmc_linhas, cmv_linhas = [], []
     for mes in MESES:
         for c in CASAS:
             if not c['codigo'] or (c['abertura'] and mes < c['abertura']):
                 continue
             g = lambda cat: float(compras.get((c['fantasia'], mes, cat), 0.0))  # noqa: E731
-            comp_alim, comp_vin, comp_beb = g('alimentos'), g('vinhos'), g('bebidas')
+            comp_alim, comp_caf, comp_beb = g('alimentos'), g('cafes'), g('bebidas')
             prod = float(producao.get((c['fantasia'], mes), 0.0))
             alvo = meta_casa[c['fantasia']] + rng.normal(-0.002 * MESES.index(mes), 0.012)
             vendas_alim = (comp_alim + prod) / max(alvo, 0.2) * 1.03
             ref_func = vendas_alim * float(rng.uniform(0.02, 0.04))
-            vendas_vin = comp_vin / float(rng.uniform(0.36, 0.46)) if comp_vin else 0.0
-            vendas_beb = comp_beb / float(rng.uniform(0.2, 0.29)) if comp_beb else 0.0
+            vendas_caf = comp_caf / float(rng.uniform(0.11, 0.17)) if comp_caf else 0.0   # cafe tem a maior margem
+            vendas_beb = comp_beb / float(rng.uniform(0.3, 0.4)) if comp_beb else 0.0
             custo_alim = comp_alim + prod - ref_func
             pct = lambda a, b: round(a / b, 4) if b else None  # noqa: E731
             cmc_linhas.append({
@@ -850,14 +825,14 @@ def gerar_cmc_cmv(notas):
                 'VENDAS ALIMENTOS (+)': round(vendas_alim, 2), 'COMPRAS ALIMENTOS (-)': round(comp_alim, 2),
                 'PRODUÇÃO CENTRAL (-)': round(prod, 2), 'REF. FUNCIONARIO (V.MÉDIO) (+)': round(ref_func, 2),
                 '% CMC ALIMENTOS': pct(custo_alim, vendas_alim),
-                'COMPRAS VINHOS (-)': round(comp_vin, 2), 'VENDAS VINHOS (+)': round(vendas_vin, 2),
-                '% CMC VINHOS': pct(comp_vin, vendas_vin),
+                'COMPRAS CAFES (-)': round(comp_caf, 2), 'VENDAS CAFES (+)': round(vendas_caf, 2),
+                '% CMC CAFES': pct(comp_caf, vendas_caf),
                 'COMPRAS BEBIDAS (-)': round(comp_beb, 2), 'VENDAS BEBIDAS (+)': round(vendas_beb, 2),
                 '% CMC BEBIDAS': pct(comp_beb, vendas_beb),
-                '% CMC Geral': pct(custo_alim + comp_vin + comp_beb, vendas_alim + vendas_vin + vendas_beb),
+                '% CMC Geral': pct(custo_alim + comp_caf + comp_beb, vendas_alim + vendas_caf + vendas_beb),
             })
-            receita = (vendas_alim + vendas_vin + vendas_beb) * float(rng.uniform(0.9, 0.93))
-            cmv = (custo_alim + comp_vin + comp_beb) * float(rng.uniform(0.96, 1.03))
+            receita = (vendas_alim + vendas_caf + vendas_beb) * float(rng.uniform(0.9, 0.93))
+            cmv = (custo_alim + comp_caf + comp_beb) * float(rng.uniform(0.96, 1.03))
             cmv_linhas.append({'CASAS': c['codigo'], 'VERTICAL': c['vertical'], 'REGIÃO': c['regiao'],
                                'MÊS': datetime(int(mes[:4]), int(mes[5:]), 1), 'RECEITA LIQUIDA ': round(receita, 2),
                                'CMV': round(-cmv, 2), 'CMV %': round(cmv / receita, 4)})
@@ -898,7 +873,7 @@ def gerar_kpis(cmv_df, notas, fornecedores):
         mm = mes[5:]
         if mes.startswith('2025'):
             base26 = cmv_2026.get('2026-' + mm)
-            cmv = (base26 + float(rng.uniform(0.004, 0.019))) if base26 else float(rng.normal(0.318, 0.006))
+            cmv = (base26 + float(rng.uniform(0.004, 0.019))) if base26 else float(rng.normal(0.29, 0.006))
             if mm == '05':
                 cmv = base26 - 0.003 if base26 else cmv     # um mes em que 2025 foi melhor (contraste no grafico)
             inflacao = float(rng.normal(0.0055, 0.0025))
@@ -938,7 +913,7 @@ def salvar_excel(df, caminho, aba):
         df.to_excel(xw, sheet_name=aba, index=False)
         props = xw.book.properties
         props.creator = props.lastModifiedBy = 'gerar_dados_sinteticos.py'
-        props.title = 'Dados sinteticos — Grupo Quintaluz (ficticio)'
+        props.title = 'Dados sinteticos — Quintaluz Cafes (ficticio)'
         props.created = props.modified = datetime(2026, 9, 1)
 
 

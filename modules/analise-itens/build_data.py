@@ -89,14 +89,15 @@ def build_dict(series):
 # sem acento e em maiusculas. A ligacao casa -> vertical/regiao vem da propria cmv-casas
 # (via FANTASIA_TO_CMV); aqui so' ficam as opcoes, nao uma lista de casas.
 SEGMENTO_REGIAO_OPCOES = [
-    ('BAR', 'SP', 'Bares SP'),
-    ('BAR', 'RJ', 'Bares RJ'),
-    ('RESTAURANTE', 'SP', 'Restaurantes SP'),
-    ('RESTAURANTE', 'RJ', 'Restaurantes RJ'),
-    ('BAR', 'BR', 'Bares BR'),
-    ('RESTAURANTE', 'BR', 'Restaurantes BR'),
     ('CAFETERIA', 'SP', 'Cafeterias SP'),
     ('CAFETERIA', 'RJ', 'Cafeterias RJ'),
+    ('CAFETERIA', 'BR', 'Cafeterias BR'),
+    ('BISTRO', 'SP', 'Bistrôs SP'),
+    ('BISTRO', 'RJ', 'Bistrôs RJ'),
+    ('BISTRO', 'BR', 'Bistrôs BR'),
+    ('QUIOSQUE', 'SP', 'Quiosques SP'),
+    ('QUIOSQUE', 'RJ', 'Quiosques RJ'),
+    ('QUIOSQUE', 'BR', 'Quiosques BR'),
 ]
 
 

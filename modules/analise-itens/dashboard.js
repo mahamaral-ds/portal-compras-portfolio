@@ -44,7 +44,7 @@ const fmtPrecoUnit = (v) => (v===null || v===undefined) ? '—' : fmtBRL(v);
 const fmtPrecoUM = (v, um) => um ? fmtBRL(v) + ' / ' + um : fmtBRL(v);
 
 const TABLE_COLUMNS = [
-  {label:'Casa', get:(r)=>DATA.dict_casas[r[COL.CASA]], sortKey:COL.CASA},
+  {label:'Loja', get:(r)=>DATA.dict_casas[r[COL.CASA]], sortKey:COL.CASA},
   {label:'Data Emissão', get:(r)=>fmtDate(r[COL.EMISSAO]), sortKey:COL.EMISSAO},
   {label:'Data Lançamento', get:(r)=>fmtDate(r[COL.DIA]), sortKey:COL.DIA},
   {label:'Segmento', get:(r)=>DATA.dict_segmentos[r[COL.SEG]], sortKey:COL.SEG},
@@ -86,7 +86,7 @@ function offsetFromYMD(y, m, d){
   return Math.round((Date.UTC(y, m, d) - Date.UTC(b.getFullYear(), b.getMonth(), b.getDate())) / 86400000);
 }
 
-const casaFilter = createDropdownFilter({containerId:'fCasa', labels:DATA.dict_casas, ariaLabel:'Casa', onChange: () => applyFilters()});
+const casaFilter = createDropdownFilter({containerId:'fCasa', labels:DATA.dict_casas, ariaLabel:'Loja', onChange: () => applyFilters()});
 const grupoFilter = createDropdownFilter({containerId:'fGrupo', labels:DATA.dict_grupos, ariaLabel:'Grupo', onChange: () => applyFilters()});
 const segmentoFilter = createDropdownFilter({containerId:'fSegmento', labels:DATA.dict_segmentos, ariaLabel:'Segmento', onChange: () => applyFilters()});
 // Segmento × Região: opcoes e vinculo casa -> opcao vem da cmv-casas (build_data.py); sem a cmv-casas o campo some
@@ -287,7 +287,7 @@ document.getElementById('btnExportExcel').addEventListener('click', () => {
 
   setTimeout(() => {
     try {
-      const header = ['Casa','Data Emissão','Data Lançamento','Segmento','Grupo','Subgrupo','NF','Descrição do Item','Descrição Item Fornecedor','Fornecedor','UM','Qtde. Comprada','Preço Unitário','Valor Contábil'];
+      const header = ['Loja','Data Emissão','Data Lançamento','Segmento','Grupo','Subgrupo','NF','Descrição do Item','Descrição Item Fornecedor','Fornecedor','UM','Qtde. Comprada','Preço Unitário','Valor Contábil'];
       const aoa = [header];
       let totalQdeExp = 0, totalValorExp = 0;
       filteredRows.forEach(r => {
@@ -346,7 +346,7 @@ const $h = (id) => document.getElementById(id);
    mudanca. Devolve os componentes e: linhaPassa() -> funcao (linha) => bool (E entre filtros, OU dentro de cada um) e
    limpar() -> zera todos sem disparar onChange. */
 function criarFiltrosDeRecorte(ids, onChange){
-  const casa = createDropdownFilter({containerId:ids.casa, labels:DATA.dict_casas, ariaLabel:'Casa', onChange});
+  const casa = createDropdownFilter({containerId:ids.casa, labels:DATA.dict_casas, ariaLabel:'Loja', onChange});
   const segmento = createDropdownFilter({containerId:ids.segmento, labels:DATA.dict_segmentos, ariaLabel:'Segmento', onChange});
   const segReg = createDropdownFilter({containerId:ids.segReg, labels:DATA.dict_segmento_regiao || [], ariaLabel:'Segmento × Região', onChange});
   if(!(DATA.dict_segmento_regiao && DATA.dict_segmento_regiao.length)) document.getElementById(ids.segRegField).hidden = true;
@@ -793,7 +793,7 @@ function geoOnFiltros(){
     cobertura: valorTotal > 0 ? 100 * valorMapeado / valorTotal : 0,
     casasMapeadas: casasMapeadas.size, casasTotal: casasVistas.size,
   };
-  document.getElementById('gResumoRecorte').textContent = fmtNum(linhas) + ' linhas · ' + fmtNum(casasVistas.size) + ' casas no recorte';
+  document.getElementById('gResumoRecorte').textContent = fmtNum(linhas) + ' linhas · ' + fmtNum(casasVistas.size) + ' lojas no recorte';
   renderGeoKpis();
   renderGeoPriceTable();
 }
@@ -805,7 +805,7 @@ function renderGeoKpis(){
   const cards = [
     {label:'Itens analisados', value: fmtNum(g.itens.length) + ' de ' + fmtNum(g.topN), sub: fmtNum(g.comComparacao) + ' com comparação entre regiões'},
     {label:'Cobertura de valor', value: g.cobertura.toFixed(1).replace('.',',') + '%'},
-    {label:'Casas mapeadas', value: fmtNum(g.casasMapeadas) + ' de ' + fmtNum(g.casasTotal)},
+    {label:'Lojas mapeadas', value: fmtNum(g.casasMapeadas) + ' de ' + fmtNum(g.casasTotal)},
     {label:'Regiões comparadas', value: g.regioes.join(' · ')},
   ];
   wrap.innerHTML = cards.map(c => `
@@ -868,7 +868,7 @@ function renderGeoPriceTable(){
   dqNote.innerHTML = `<b>Nota de qualidade de dado:</b> o preço de cada item é calculado só com os registros na sua unidade de referência (a de maior valor comprado), exibida ao lado do preço — ` +
     `${fmtNum(g.multiUm)} dos ${fmtNum(g.itens.length)} itens exibidos foram comprados em mais de uma unidade e usam apenas a de referência; registros marcados como suspeitos ficam de fora até a validação. ` +
     `Item com preço em uma região só aparece sem variação. A análise cobre ${g.cobertura.toFixed(1).replace('.',',')}% do valor comprado no recorte, já que ${g.casasTotal - g.casasMapeadas} ` +
-    `casa(s) não puderam ser identificadas com segurança na base de regiões (nomes usados nas duas planilhas não batem exatamente).`;
+    `loja(s) não puderam ser identificadas com segurança na base de regiões (nomes usados nas duas planilhas não batem exatamente).`;
 }
 
 document.getElementById('geoPriceSearch').addEventListener('input', (e) => {

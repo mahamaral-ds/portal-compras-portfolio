@@ -325,7 +325,7 @@
   document.getElementById('btnRestaurarDemo').addEventListener('click', function () {
     if (!confirm('Apagar as edições feitas neste navegador e voltar aos dados de exemplo?')) return;
     try {
-      ['quintaluz_pipeline_projetos_v1', 'quintaluz_pipeline_rfps_v1', 'quintaluz_pipeline_edit_unlocked']
+      ['quintaluz_cafes_pipeline_projetos_v2', 'quintaluz_cafes_pipeline_rfps_v2', 'quintaluz_pipeline_edit_unlocked']
         .forEach(function (k) { localStorage.removeItem(k); });
     } catch (e) {}
     location.reload();

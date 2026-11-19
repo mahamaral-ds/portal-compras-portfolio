@@ -1,11 +1,11 @@
 """
 Cruzamento entre os nomes de casa usados na base BRUTA de notas fiscais
-(coluna FANTASIA/CASAS, nomes por extenso — ex: "BRASA QUINTAL MIRANTE") e os
-codigos usados nas bases de CMC e CMV (coluna CASA/CASAS — ex: "BQ-MIRANTE").
+(coluna FANTASIA/CASAS, nomes por extenso — ex: "QUINTALUZ CAFE MIRANTE") e os
+codigos usados nas bases de CMC e CMV (coluna CASA/CASAS — ex: "QC-MIRANTE").
 
-Os dois mapas sao montados a partir do catalogo ficticio de casas
-(shared_py/catalogo_ficticio.py). Casas sem codigo (ex.: o quiosque sazonal)
-ficam de fora de proposito — servem de exemplo de casa sem correspondencia.
+Os dois mapas sao montados a partir do catalogo ficticio de lojas
+(shared_py/catalogo_ficticio.py). Lojas sem codigo (ex.: o quiosque sazonal)
+ficam de fora de proposito — servem de exemplo de loja sem correspondencia.
 """
 from catalogo_ficticio import CASAS
 

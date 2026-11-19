@@ -506,7 +506,7 @@ function rkMontar(){
       toDate:dia,
       toOffset:(y, m, d) => Math.round((Date.UTC(y, m, d) - Date.UTC(rkBaseDate.getFullYear(), rkBaseDate.getMonth(), rkBaseDate.getDate())) / 86400000),
       format:(off) => dia(off).toLocaleDateString('pt-BR'), onChange}),
-    casa: createDropdownFilter({containerId:'rkCasa', labels:rkBase.dict_casas, ariaLabel:'Casa', onChange}),
+    casa: createDropdownFilter({containerId:'rkCasa', labels:rkBase.dict_casas, ariaLabel:'Loja', onChange}),
     grupo: createDropdownFilter({containerId:'rkGrupo', labels:rkGrupoIdx.map(i => rkBase.dict_grupos[i]), ariaLabel:'Grupo', onChange}),
     segmento: createDropdownFilter({containerId:'rkSegmento', labels:rkBase.dict_segmentos, ariaLabel:'Segmento', onChange}),
     segReg: createDropdownFilter({containerId:'rkSegReg', labels:rkBase.dict_segmento_regiao || [], ariaLabel:'Segmento × Região', onChange}),
@@ -1536,7 +1536,7 @@ function renderRegionalizacao(){
     containerId:'ifPeriodo', granularity:'month', months: ifMonths, minOff:0, maxOff: ifMonths.length - 1,
     format: off => ifMonthLabels[ifMonths[off]] || ifMonths[off], onChange: ifOnSelectionChange,
   });
-  const ifCasaFilter = createDropdownFilter({containerId:'ifCasa', labels: ifCasas, ariaLabel:'Casa/Unidade', onChange: ifOnSelectionChange});
+  const ifCasaFilter = createDropdownFilter({containerId:'ifCasa', labels: ifCasas, ariaLabel:'Loja/Unidade', onChange: ifOnSelectionChange});
   const ifGrupoFilter = createDropdownFilter({containerId:'ifGrupo', labels: ifGruposUnicos, ariaLabel:'Grupo de item', onChange: ifOnSelectionChange});
 
   document.getElementById('ifCriterio').addEventListener('change', e => { ifCriterioForn = e.target.value; ifOnFilterChange(); });
@@ -1565,7 +1565,7 @@ function renderRegionalizacao(){
     const parts = [];
     if(ifMesIniIdx!==0 || ifMesFimIdx!==ifMonths.length-1) parts.push('período: '+ifMonthLabels[ifMonths[ifMesIniIdx]]+' a '+ifMonthLabels[ifMonths[ifMesFimIdx]]);
     const resumo = (nomes) => nomes.length <= 3 ? nomes.join(', ') : nomes.slice(0,3).join(', ')+' +'+(nomes.length-3);
-    if(ifCasaSet) parts.push('casa: '+resumo(Array.from(ifCasaSet).sort((a,b)=>a-b).map(i => ifCasas[i])));
+    if(ifCasaSet) parts.push('loja: '+resumo(Array.from(ifCasaSet).sort((a,b)=>a-b).map(i => ifCasas[i])));
     if(ifGrupoSet) parts.push('grupo: '+resumo(Array.from(ifGrupoSet).sort()));
     if(ifBusca) parts.push('busca: "'+ifBusca+'"');
     const note = document.getElementById('ifActiveFilterNote');
@@ -1597,8 +1597,8 @@ function renderRegionalizacao(){
       `<b>Preço médio é sempre ponderado</b> (Σ valor ÷ Σ quantidade), nunca média simples de preços unitários.`,
       `<b>Mediana, mínimo, máximo, volatilidade e tendência</b> usam o histórico completo disponível e não mudam com o filtro de período — só valor, quantidade, preço médio do período e saving respeitam o filtro de mês.`,
       `<b>Saving potencial é oportunidade teórica, não meta.</b> Só é calculado quando o fornecedor de referência (quem oferece o "melhor preço") tem, no histórico completo do item, pelo menos ${c.saving_min_compras} compras e ${c.saving_min_dias} dias de janela — sempre comparando dentro do mesmo mês (nunca janeiro contra julho).`,
-      `<b>"Casas atendidas"</b>, quando o período filtrado cobre mais de um mês, mostra o maior valor observado num único mês do intervalo — não é a união exata de casas distintas ao longo de vários meses.`,
-      `<b>Matriz de multi-sourcing</b> compara apenas entre os ${fmtNum(q.fornecedores_uniao)} fornecedores do recorte atual (união dos top ${c.top_n_uniao} por valor/NFs/casas/itens distintos) — já o "melhor preço" usado no cálculo de saving é sempre contra TODOS os fornecedores da base, não só esses ${fmtNum(q.fornecedores_uniao)}.`,
+      `<b>"Lojas atendidas"</b>, quando o período filtrado cobre mais de um mês, mostra o maior valor observado num único mês do intervalo — não é a união exata de lojas distintas ao longo de vários meses.`,
+      `<b>Matriz de multi-sourcing</b> compara apenas entre os ${fmtNum(q.fornecedores_uniao)} fornecedores do recorte atual (união dos top ${c.top_n_uniao} por valor/NFs/lojas/itens distintos) — já o "melhor preço" usado no cálculo de saving é sempre contra TODOS os fornecedores da base, não só esses ${fmtNum(q.fornecedores_uniao)}.`,
       `Recorte analisado: ${fmtNum(q.fornecedores_uniao)} fornecedores, ${fmtNum(q.itens_relevantes)} itens, ${fmtNum(q.pares_totais)} pares fornecedor×item (${fmtNum(q.pares_com_preco)} com métrica de preço, ${fmtNum(q.pares_sem_preco)} sem).`,
       `${fmtNum(q.itens_single_source)} itens são comprados de um único fornecedor em toda a base — risco de dependência.`,
       `Processado em ${DATA.gerado_em}, cobrindo ${ifMonthLabels[ifMonths[0]]} a ${ifMonthLabels[ifMonths[ifMonths.length-1]]}.`,

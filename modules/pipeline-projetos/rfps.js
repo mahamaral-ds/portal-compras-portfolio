@@ -17,7 +17,7 @@
    (botao, formulario, modal) e nada e' lido nem gravado no navegador — mostra exatamente o rfps-data.js.
    ===================================================================== */
 const MODO_EDICAO = true;
-const STORAGE_KEY_RFPS = 'quintaluz_pipeline_rfps_v1';
+const STORAGE_KEY_RFPS = 'quintaluz_cafes_pipeline_rfps_v2';
 const UNLOCK_KEY_RFPS = 'quintaluz_pipeline_edit_unlocked';   // o mesmo desbloqueio da aba Projetos
 
 (function planejamentoRfps(){

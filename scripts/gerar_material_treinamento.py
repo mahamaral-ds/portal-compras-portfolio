@@ -50,7 +50,7 @@ def novo_slide(titulo, subtitulo, numero):
     d.text((64, 46), titulo, font=fonte(38), fill=INK)
     d.text((64, 98), subtitulo, font=fonte(22), fill=MUTED)
     d.line([64, 140, W - 64, 140], fill=LINE, width=2)
-    d.text((64, H - 44), 'Guia de Strategic Sourcing · Grupo Quintaluz (empresa fictícia) · exemplos ilustrativos',
+    d.text((64, H - 44), 'Guia de Strategic Sourcing · Quintaluz Cafés (empresa fictícia) · exemplos ilustrativos',
            font=fonte(16), fill=MUTED)
     d.text((W - 100, H - 44), f'{numero:02d}', font=fonte(16), fill=MUTED)
     return img, d
@@ -79,8 +79,8 @@ def seta(d, x1, y1, x2, y2, cor=MUTED, w=3):
 def s_categorias(n):
     img, d = novo_slide('Árvore de categorias', 'Itens agrupados por base fornecedora e uso em comum', n)
     caixa(d, (520, 170, 760, 230), 'Gasto total', fundo=INK, cor='white')
-    grupos = [('Proteínas', ['Bovinos', 'Aves', 'Pescados']), ('Hortifrúti', ['Legumes', 'Frutas', 'Verduras']),
-              ('Mercearia', ['Grãos', 'Massas', 'Óleos']), ('Bebidas', ['Cervejas', 'Águas', 'Destilados'])]
+    grupos = [('Cafés', ['Especiais', 'Tradicionais', 'Chás']), ('Laticínios', ['Leites', 'Vegetais', 'Queijos']),
+              ('Padaria', ['Pães', 'Salgados', 'Confeitaria']), ('Descartáveis', ['Copos', 'Tampas', 'Embalagens'])]
     for i, (g, subs) in enumerate(grupos):
         x = 90 + i * 285
         caixa(d, (x, 300, x + 240, 356), g, fundo=BRAND, cor='white')
@@ -122,11 +122,11 @@ def s_perfil(n):
 
 
 def s_swot(n):
-    img, d = novo_slide('SWOT da categoria Hortifrúti', 'Exemplo fictício para uma rede de restaurantes', n)
-    quad = [('Forças', 'Volume concentrado em duas\ncapitais; contratos semanais', GREEN),
-            ('Fraquezas', 'Especificações diferentes\npor marca; pouca previsão', RED),
-            ('Oportunidades', 'Produtores regionais e\ncompra direta por safra', BRAND),
-            ('Ameaças', 'Clima e entressafra elevam\npreços em até 40%', AMBER)]
+    img, d = novo_slide('SWOT da categoria Café especial', 'Exemplo fictício para uma rede de cafeterias', n)
+    quad = [('Forças', 'Volume anual previsível e\nblend único em todas as lojas', GREEN),
+            ('Fraquezas', 'Uma só torrefação no blend\nde espresso; pouco estoque', RED),
+            ('Oportunidades', 'Compra direta de cooperativas\ne torra própria na central', BRAND),
+            ('Ameaças', 'Arábica volátil e cotado em\ndólar; quebras de safra', AMBER)]
     for i, (t, txt, cor) in enumerate(quad):
         lin, col = divmod(i, 2)
         x, y = 120 + col * 540, 170 + lin * 240
@@ -151,9 +151,9 @@ def s_mercado(n):
 
 
 def s_tco(n):
-    img, d = novo_slide('Custo total de propriedade (TCO)', 'O preço é só uma parte do custo — exemplo: R$ por kg de proteína', n)
-    partes = [('Preço de compra', 38.0, BRAND), ('Frete e impostos', 4.6, LIGHT), ('Armazenagem fria', 2.1, TEAL),
-              ('Porcionamento', 3.4, AMBER), ('Perdas e quebra', 2.9, RED)]
+    img, d = novo_slide('Custo total de propriedade (TCO)', 'O preço é só uma parte do custo — exemplo: R$ por kg de café servido', n)
+    partes = [('Preço de compra', 38.0, BRAND), ('Frete e impostos', 4.6, LIGHT), ('Embalagem e estoque', 2.1, TEAL),
+              ('Calibragem e moagem', 3.4, AMBER), ('Perdas e validade', 2.9, RED)]
     x, base = 120, 610
     acum = 0
     for nome, v, cor in partes:
@@ -256,12 +256,17 @@ SLIDES = [
 def capa():
     img = Image.new('RGB', (W, H), INK)
     d = ImageDraw.Draw(img)
-    d.ellipse((90, 220, 250, 380), outline=LIGHT, width=8)
-    d.pieslice((115, 245, 225, 355), 180, 360, fill=LIGHT)
-    pts = [(105 + t * 1.3, 330 - 9 * math.sin(t / 130 * 3 * math.pi)) for t in range(131)]
-    d.line(pts, fill='white', width=8)
+    # logo: xicara com o sol nascendo (mesmas formas de assets/quintaluz-logo.svg, escala 5x)
+    k, ox, oy = 5, 80, 215
+    P = lambda x, y: (ox + x * k, oy + y * k)  # noqa: E731
+    d.pieslice((*P(9, 9.5), *P(20, 20.5)), 180, 360, fill=LIGHT)
+    arco = [P(14.5 + 8 * math.cos(math.radians(a)), 16.5 + 8 * math.sin(math.radians(a))) for a in range(0, 181, 5)]
+    d.line([P(6.5, 15), P(22.5, 15), P(22.5, 16.5)] + arco + [P(6.5, 15)], fill='white', width=11, joint='curve')
+    alca = [P(24 + 2.75 * math.cos(math.radians(a)), 19.25 + 2.75 * math.sin(math.radians(a))) for a in range(-90, 91, 10)]
+    d.line([P(22.5, 16.5), P(24, 16.5)] + alca + [P(22, 22)], fill='white', width=11, joint='curve')
+    d.line([P(4.5, 27.3), P(26.5, 27.3)], fill=LIGHT, width=11)
     d.text((300, 230), 'Guia de Strategic Sourcing', font=fonte(54), fill='white')
-    d.text((300, 310), 'Grupo Quintaluz Gastronomia · Compras & Suprimentos', font=fonte(26), fill='#AEB6C6')
+    d.text((300, 310), 'Quintaluz Cafés · Compras & Suprimentos', font=fonte(26), fill='#AEB6C6')
     d.text((300, 380), 'Material de demonstração — empresa e exemplos fictícios', font=fonte(22), fill=LIGHT)
     return img
 
@@ -276,7 +281,7 @@ def main():
         paginas.append(img)
     pdf = os.path.join(DESTINO, 'guia-strategic-sourcing.pdf')
     paginas[0].save(pdf, save_all=True, append_images=paginas[1:], resolution=96,
-                    title='Guia de Strategic Sourcing — Grupo Quintaluz (ficticio)', author='Portal de Compras (demonstração)')
+                    title='Guia de Strategic Sourcing — Quintaluz Cafes (ficticio)', author='Portal de Compras (demonstração)')
     print(f'{len(SLIDES)} slides e o PDF gerados em {DESTINO}')
 
 

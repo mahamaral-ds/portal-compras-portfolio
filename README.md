@@ -4,14 +4,23 @@
 
 [![Publicar no GitHub Pages](https://github.com/mahamaral-ds/portal-compras-portfolio/actions/workflows/pages.yml/badge.svg)](https://github.com/mahamaral-ds/portal-compras-portfolio/actions/workflows/pages.yml)
 
-Portal de BI para a área de Compras de uma rede de restaurantes: um menu central dá acesso a dez módulos
+Portal de BI para a área de Compras de uma rede de cafeterias: um menu central dá acesso a dez módulos
 (dashboards independentes) com gasto, fornecedores, preços, custo da mercadoria, desempenho de entrega,
 compliance, projetos e capacitação.
 
-> **Todos os dados deste repositório são sintéticos.** A empresa, o **Grupo Quintaluz Gastronomia**, é fictícia, assim
-> como as marcas, casas, fornecedores, compradores, itens, notas fiscais, valores, notícias e projetos. Os números
+> **Todos os dados deste repositório são sintéticos.** A empresa, a **Quintaluz Cafés**, é fictícia, assim
+> como as marcas, lojas, fornecedores, compradores, itens, notas fiscais, valores, notícias e projetos. Os números
 > são gerados por um script com semente fixa (veja [Dados sintéticos](#dados-sintéticos)) e não representam nenhuma
 > empresa real.
+
+A rede fictícia tem **23 lojas em três formatos** e uma central de produção:
+
+| Formato | Lojas | Perfil de compra |
+|---|---|---|
+| **Cafeteria** (Quintaluz Café) | 10 lojas de rua | Cafés especiais, leites, padaria e confeitaria de vitrine |
+| **Bistrô** (Quintaluz Bistrô) | 5 lojas com cozinha | O mesmo da cafeteria, mais frios, hortifrúti e pratos de brunch |
+| **Quiosque** (Quintaluz Expresso) | 8 pontos em shoppings, estações e centros empresariais | Café para levar: mais descartáveis (copos e tampas) e itens prontos |
+| **Central de produção** | 1 | Torra café verde comprado de cooperativas e produz pães e bolos para as lojas |
 
 O portal é **100% estático** (HTML, CSS e JavaScript puros, sem backend e sem etapa de build no front-end). Um script
 Python por módulo (`build_data.py`) transforma as planilhas de origem em um `data.js` pronto para o navegador.
@@ -27,8 +36,8 @@ exibidos em grade de cards. Ele mostra o período da base e destaca o módulo de
 |---|---|
 | **Overview Compras** | Panorama do setor: gasto, pedidos, fornecedores, ticket médio, inflação interna, histórico de CMV e principais fornecedores e categorias. |
 | **Indicadores** | KPIs executivos mês a mês, CMV 2025 × 2026 com inflação, PMP × DIO com metas. |
-| **Fornecedores e Performance** | Visão Geral, Curva ABC, Ranking, Análise por Categoria, Fornecedor × Vertical, **OTIF** (no prazo e completo, por fornecedor, comprador e categoria), Regionalização por UF e **Itens por Fornecedor** (preço, melhor preço e saving potencial). |
-| **CMV e CMC** | Indicador alternável CMV/CMC por casa, vertical e região: Visão Geral, Ranking de Casas (média e mediana) e Geolocalização. |
+| **Fornecedores e Performance** | Visão Geral, Curva ABC, Ranking, Análise por Categoria, Fornecedor × Formato, **OTIF** (no prazo e completo, por fornecedor, comprador e categoria), Regionalização por UF e **Itens por Fornecedor** (preço, melhor preço e saving potencial). |
+| **CMV e CMC** | Indicador alternável CMV/CMC por loja, formato e região, com o CMC aberto em alimentos, cafés e bebidas: Visão Geral, Ranking de Lojas (média e mediana) e Geolocalização. |
 | **Análise de Itens** | Histórico de Preços, Preços por Geolocalização (heatmap por região), Curva ABC, Top Itens por Categoria e Tabela Detalhada linha a linha com exportação para Excel. As análises de preço usam a **unidade de referência** de cada item. |
 | **Categorias** | Visão Geral, Ranking, Composição (treemap proporcional ao valor) e Evolução Mensal. |
 | **Commodities e Insights** | Painel de Commodities (índice de preço pago × IPCA e dólar) e Notícias de Mercado com filtros por tema, impacto e período. |
@@ -70,8 +79,8 @@ projeto_portal_compras_portfolio/
 ├── shared/                    topbar, filtros, calendário, gráficos, tema e metadados do período (portal-meta.js)
 ├── shared_py/
 │   ├── etl_common.py          planilha bruta de notas -> base consolidada (padronização de fornecedores, categorias, itens)
-│   ├── catalogo_ficticio.py   casas, verticais e regiões do grupo fictício
-│   └── casa_geo_map.py        casa (nome por extenso) -> código das bases de CMC/CMV
+│   ├── catalogo_ficticio.py   lojas, formatos e regiões da rede fictícia
+│   └── casa_geo_map.py        loja (nome por extenso) -> código das bases de CMC/CMV
 ├── modules/<módulo>/          index.html + style.css + dashboard.js + data.js (+ build_data.py)
 ├── scripts/
 │   ├── gerar_dados_sinteticos.py   gera todas as planilhas de origem em raw-data/
@@ -145,35 +154,38 @@ página precisou de mudança de lógica.
 
 | Arquivo | Conteúdo |
 |---|---|
-| `base-raw-compras.xlsx` | ~60 mil linhas de itens de nota fiscal (jan–ago/2026), 24 casas e a central de produção, ~170 fornecedores e ~265 itens |
+| `base-raw-compras.xlsx` | ~60 mil linhas de itens de nota fiscal (jan–ago/2026), 23 lojas e a central de produção, ~150 fornecedores e ~225 itens |
 | `complemento_fornecedores.xlsx` | CNPJ, UF e prazo médio de pagamento de cada fornecedor (alguns sem cadastro ou com filiais em UFs diferentes) |
 | `OTIF_base.xlsx` | Pedidos com previsão, entrega, atraso e completude; compradores fictícios |
-| `base-CMC.xlsx` / `cmv-casas.xlsx` | Vendas, compras, CMC e CMV por casa e mês |
+| `base-CMC.xlsx` / `cmv-casas.xlsx` | Vendas, compras, CMC (alimentos, cafés e bebidas) e CMV por loja e mês |
 | `base-KPIs.xlsx` | Inflação interna, PMP, DIO, cotações, contratos e CMV (jan/2025–ago/2026) |
 | `indices-mercado.json` | IPCA por grupo e dólar, séries simuladas no formato das séries públicas |
 
 ### Como os dados ficam realistas e coerentes
 
 - **Concentração de gasto:** popularidade dos itens com distribuição lognormal e porte dos fornecedores com
-  distribuição de Pareto, o que produz uma Curva ABC realista. Casas têm portes diferentes e mix de compra por
-  vertical (bares compram mais bebidas; cafeterias, mais café, padaria e laticínios).
+  distribuição de Pareto, o que produz uma Curva ABC realista. Lojas têm portes diferentes e mix de compra por
+  formato (quiosques compram mais descartáveis; bistrôs, mais frios e hortifrúti; a central, café verde e insumos
+  de padaria).
 - **Preços no tempo:** cada item tem uma tendência (alta, queda ou estabilidade) com ruído, mais um choque mensal da
-  sua família de commodity (bovinos, aves, café…) e sazonalidade no hortifrúti. Há também diferenças regionais e
+  sua família de commodity (café, leite, cacau, trigo, açúcar e frutas), com o arábica em alta no primeiro
+  semestre, o cacau devolvendo parte da alta e o leite subindo na entressafra. Há também diferenças regionais e
   por fornecedor.
-- **Sazonalidade de volume:** fatores mensais (alta em janeiro e julho, baixa em fevereiro).
+- **Sazonalidade de volume:** cafeteria vende mais no frio (alta de maio a agosto) e menos nas férias de verão.
 - **Unidades de medida:** parte dos itens é comprada também em caixa (`CX`). Há registros suspeitos de propósito
   (caixa faturada como unidade, erros de preço), o que exercita a regra de unidade de referência e as conversões.
 - **NF Sequencial:** a numeração das notas de cada fornecedor é gerada com intervalos médios diferentes, cobrindo
   todos os níveis do farol, de normal a crítico.
 - **Coerência entre bases:**
-  - as compras da base de CMC são a soma das notas de cada casa e mês;
+  - as compras da base de CMC são a soma das notas de cada loja e mês;
   - os pedidos do OTIF são as próprias notas;
   - o CMV dos KPIs vem da base de CMV;
   - a inflação interna é o índice de preço pago calculado sobre as notas;
   - o IPCA sintético de cada família acompanha o choque de preço usado nas notas.
 - **Casos de borda:** variações de grafia de fornecedores (unificadas pelo ETL), uma transação intercompany
-  (excluída), itens com nomes diferentes para o mesmo produto (unificados), uma casa inaugurada no meio do período,
-  uma casa sem código nas bases de CMC e linhas sem quantidade.
+  (excluída), itens com nomes diferentes para o mesmo produto (unificados), um item cadastrado na categoria errada
+  (reclassificado), uma loja inaugurada no meio do período, um quiosque sem código nas bases de CMC e linhas sem
+  quantidade.
 
 Nenhum nome ou valor real foi usado como base. Os nomes de fornecedores são formados por sílabas sorteadas, e os
 CNPJs têm dígitos verificadores válidos, mas a raiz fica na faixa 90.000.000–99.999.999, reservada aqui para dados
@@ -191,5 +203,5 @@ fictícios.
 | `--line` | `#E1E5EE` | Bordas |
 | `--muted` | `#6B7385` | Texto secundário |
 
-O logo (um prato com a linha do horizonte) e o favicon são formas geométricas simples, desenhadas para este
+O logo (uma xícara com o sol nascendo) e o favicon são formas geométricas simples, desenhadas para este
 projeto. As cores semânticas dos gráficos (verde, âmbar e vermelho de status, classes A/B/C) não mudam com a marca.

@@ -20,10 +20,10 @@ const INDICATOR_CONFIG = {
     label: 'CMC',
     labelFull: 'Custo da Mercadoria Consumida',
     data: (typeof CMC_DATA !== 'undefined') ? CMC_DATA : null,
-    meta: 31,
+    meta: 24,
     subcats: [
       {key:'alimentos', label:'Alimentos'},
-      {key:'vinhos', label:'Vinhos'},
+      {key:'cafes', label:'Cafés'},
       {key:'bebidas', label:'Bebidas'},
     ],
     formula: 'CMC = Custo líquido de mercadoria ÷ Vendas',
@@ -119,9 +119,9 @@ function applyIndicadorTexts(){
   document.getElementById('evoSub').textContent =
     `${cfg.label} Geral, ${subLabels} · esta aba sempre exibe a série completa (${fullPeriodLabel()}), independente do filtro de período`;
   document.getElementById('heatmapSub').textContent =
-    `Todas as casas, ordenadas por volume de vendas (decrescente) · esta aba sempre exibe a série completa (${fullPeriodLabel()}), independente do filtro de período`;
+    `Todas as lojas, ordenadas por volume de vendas (decrescente) · esta aba sempre exibe a série completa (${fullPeriodLabel()}), independente do filtro de período`;
   document.getElementById('footerText').textContent =
-    `${cfg.label} calculado a partir da base de ${activeIndicador==='cmv'?'receita líquida e CMV':'vendas e compras'} por casa (${fullPeriodLabel()}). Metodologia: ${cfg.formula}. Dados sintéticos — empresa fictícia, projeto de portfólio.`;
+    `${cfg.label} calculado a partir da base de ${activeIndicador==='cmv'?'receita líquida e CMV':'vendas e compras'} por loja (${fullPeriodLabel()}). Metodologia: ${cfg.formula}. Dados sintéticos — empresa fictícia, projeto de portfólio.`;
 }
 
 /* ===================== Period chips (seleção múltipla, estilo Power BI) ===================== */
@@ -266,7 +266,7 @@ function renderKPIs(){
     </div>
   `).join('');
 
-  document.getElementById('brandSub').textContent = `${cfg.labelFull} por casa do grupo · ${periodLabel()}`;
+  document.getElementById('brandSub').textContent = `${cfg.labelFull} por loja da rede · ${periodLabel()}`;
 }
 
 function renderEvolucao(){
@@ -352,7 +352,7 @@ function renderInsights(){
   if(pior){
     insights.push({
       tipo: metaInsightClass(pior.cmc_pct),
-      label: 'Pior Casa',
+      label: 'Pior Loja',
       texto: `${pior.casa} — ${cfg.label} de ${fmtPct1(pior.cmc_pct)}`,
     });
   }
@@ -362,7 +362,7 @@ function renderInsights(){
   if(melhor){
     insights.push({
       tipo: metaInsightClass(melhor.cmc_pct),
-      label: 'Melhor Casa',
+      label: 'Melhor Loja',
       texto: `${melhor.casa} — ${cfg.label} de ${fmtPct1(melhor.cmc_pct)}`,
     });
   }
@@ -373,8 +373,8 @@ function renderInsights(){
     const acimaMeta = ranking.filter(r => r.cmc_pct > META);
     insights.push({
       tipo: acimaMeta.length ? 'alerta' : 'oportunidade',
-      label: 'Casas Acima da Meta',
-      texto: `${fmtNum(acimaMeta.length)} de ${fmtNum(ranking.length)} casas`,
+      label: 'Lojas Acima da Meta',
+      texto: `${fmtNum(acimaMeta.length)} de ${fmtNum(ranking.length)} lojas`,
     });
   }
 
@@ -431,8 +431,8 @@ function renderDataQualityNote(){
   if(semDado.length){
     block.style.display = 'block';
     document.getElementById('dqText').textContent =
-      `${semDado.length} casa(s) com ${cfg.semDadoTexto} no período selecionado (${semDado.join(', ')}) — `+
-      `foram excluídas do ranking e dos gráficos de ${cfg.label} por casa, já que sem custo lançado o percentual calculado não é representativo.`;
+      `${semDado.length} loja(s) com ${cfg.semDadoTexto} no período selecionado (${semDado.join(', ')}) — `+
+      `foram excluídas do ranking e dos gráficos de ${cfg.label} por loja, já que sem custo lançado o percentual calculado não é representativo.`;
   } else {
     block.style.display = 'none';
   }
@@ -443,14 +443,14 @@ function renderTopTables(){
   const p = periodData();
   const rowHtml = (r) => `<tr><td>${r.casa}</td><td class="num">${fmtBRL(r.vendas_total)}</td><td class="num">${fmtPct1(r.media_cmc)}</td><td class="num">${fmtPct1(r.mediana_cmc)}</td><td class="num">${cmcBadge(r.cmc_pct)}</td></tr>`;
   document.querySelector('#tableMelhores tbody').innerHTML = p.melhores.map(rowHtml).join('') ||
-    '<tr><td colspan="5" style="text-align:center;color:var(--text-faint);padding:16px;">Sem casas com custo registrado no período.</td></tr>';
+    '<tr><td colspan="5" style="text-align:center;color:var(--text-faint);padding:16px;">Sem lojas com custo registrado no período.</td></tr>';
   document.querySelector('#tablePiores tbody').innerHTML = p.piores.map(rowHtml).join('') ||
-    '<tr><td colspan="5" style="text-align:center;color:var(--text-faint);padding:16px;">Sem casas com custo registrado no período.</td></tr>';
+    '<tr><td colspan="5" style="text-align:center;color:var(--text-faint);padding:16px;">Sem lojas com custo registrado no período.</td></tr>';
 }
 
 function getRankingCols(){
   return [
-    {key:'casa', label:'Casa'},
+    {key:'casa', label:'Loja'},
     {key:'segmento', label:'Segmento'},
     {key:'regiao', label:'Região'},
     {key:'vendas_total', label:'Vendas', num:true, fmt:fmtBRL},
@@ -492,14 +492,14 @@ function renderRankingBody(){
     if(typeof va === 'number') return (va - vb) * rankSortDir;
     return String(va).localeCompare(String(vb)) * rankSortDir;
   });
-  document.getElementById('rankResultCount').textContent = fmtNum(rows.length) + ' de ' + fmtNum(periodData().ranking.length) + ' casas';
+  document.getElementById('rankResultCount').textContent = fmtNum(rows.length) + ' de ' + fmtNum(periodData().ranking.length) + ' lojas';
   tbody.innerHTML = rows.map(r => `
     <tr>${rankingCols.map(c => {
       let val = r[c.key];
       if(c.fmt) val = c.fmt(val);
       return `<td class="${c.num?'num':''}">${val}</td>`;
     }).join('')}</tr>
-  `).join('') || '<tr><td colspan="'+rankingCols.length+'" style="text-align:center;color:var(--text-faint);padding:20px;">Nenhuma casa encontrada.</td></tr>';
+  `).join('') || '<tr><td colspan="'+rankingCols.length+'" style="text-align:center;color:var(--text-faint);padding:20px;">Nenhuma loja encontrada.</td></tr>';
 }
 
 document.getElementById('rankSearch').addEventListener('input', (e) => {
@@ -531,7 +531,7 @@ function renderHeatmapBody(){
     : linhas;
 
   document.getElementById('heatmapResultCount').textContent =
-    fmtNum(rows.length) + ' de ' + fmtNum(linhas.length) + ' casas';
+    fmtNum(rows.length) + ' de ' + fmtNum(linhas.length) + ' lojas';
 
   let html = '';
   rows.forEach(row => {
@@ -543,12 +543,12 @@ function renderHeatmapBody(){
     html += '</tr>';
   });
   document.querySelector('#heatmapCasaMes tbody').innerHTML = html ||
-    `<tr><td colspan="${meses.length+1}" style="text-align:center;color:var(--text-faint);padding:16px;">Nenhuma casa encontrada.</td></tr>`;
+    `<tr><td colspan="${meses.length+1}" style="text-align:center;color:var(--text-faint);padding:16px;">Nenhuma loja encontrada.</td></tr>`;
 }
 
 function renderHeatmap(){
   const {meses} = DATA.heatmap_casa_mes;
-  let head = '<thead><tr><th style="position:sticky;left:0;background:#fff;">Casa</th>';
+  let head = '<thead><tr><th style="position:sticky;left:0;background:#fff;">Loja</th>';
   meses.forEach(m => head += `<th class="num">${monthLabels[m]}</th>`);
   head += '</tr></thead><tbody></tbody>';
   document.getElementById('heatmapCasaMes').innerHTML = head;
@@ -569,7 +569,7 @@ function renderScatter(){
     type:'scatter',
     data:{
       datasets:[{
-        label:'Casas',
+        label:'Lojas',
         data: items.map(it => ({x: it.vendas_total, y: it.cmc_pct, casa: it.casa})),
         backgroundColor: items.map(it => cmcClass(it.cmc_pct)==='good' ? '#0E6E6ECC' : cmcClass(it.cmc_pct)==='warn' ? '#C98A3BCC' : '#C0442CCC'),
         pointRadius:6, pointHoverRadius:9,
@@ -601,7 +601,7 @@ function renderGeoRegionCards(){
     <div class="geo-region-card">
       <div class="name">${REGIAO_LABELS[r.regiao] || r.regiao} (${r.regiao})</div>
       <div class="cmc-value">${cmcBadge(r.cmc_pct)}</div>
-      <div class="details">${fmtBRL(r.vendas_total)} em vendas · ${r.qtd_casas} casas</div>
+      <div class="details">${fmtBRL(r.vendas_total)} em vendas · ${r.qtd_casas} lojas</div>
     </div>
   `).join('');
 }

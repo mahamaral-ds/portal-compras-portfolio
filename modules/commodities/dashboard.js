@@ -211,8 +211,8 @@ function renderPainel(){
     '<b>Como ler:</b> o preço pago é calculado com os registros de compra na unidade de referência de cada item (a de maior valor comprado), sem registros suspeitos — a mesma regra de Análise de Itens — ' +
     'e vira um índice encadeado mês a mês (itens com preço nos dois meses, ponderados pelo gasto do mês anterior; razões fora de 1/3 a 3 são ignoradas). ' +
     'Subir é custo maior para a compra (vermelho). O IPCA é preço ao consumidor, uma referência de mercado, não o preço de atacado. ' +
-    '<b>Fontes:</b> notas fiscais sintéticas do Grupo Quintaluz (fictício); IPCA e dólar sintéticos, no formato das séries do IBGE (SIDRA 7060) e do Banco Central (SGS 10813). ' +
-    'Cada commodity reúne os itens de uma regra fixa (passe o mouse sobre "itens na base" para ver); vinhos, cervejas e pescados não entram por não terem referência pública confiável.';
+    '<b>Fontes:</b> notas fiscais sintéticas da Quintaluz Cafés (fictícia); IPCA e dólar sintéticos, no formato das séries do IBGE (SIDRA 7060) e do Banco Central (SGS 10813). ' +
+    'Cada commodity reúne os itens de uma regra fixa (passe o mouse sobre "itens na base" para ver); cápsulas, xaropes e bebidas vegetais não entram por não terem referência pública confiável.';
 }
 document.getElementById('cmClear').addEventListener('click', () => { cmComm.clear(true); cmPeriodo.clear(true); renderPainel(); });
 renderPainel();

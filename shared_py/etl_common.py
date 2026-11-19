@@ -38,8 +38,8 @@ seguintes etapas:
      CENTRAL DE PRODUCAO LTDA" — a central de producao do proprio grupo,
      transacao intercompany, nao fornecedor externo real).
   3. `tratar_dados_pre_analise()` — pequenos ajustes de categorizacao
-     (GRUPOS_RENOMEADOS: GRUPO "MERCEARIA SECA" -> "MERCEARIA"; item "POLVO" reclassificado
-     para GRUPO "PROTEINAS" / SUBGRUPO "PESCADOS"; itens com nomes diferentes
+     (GRUPOS_RENOMEADOS: GRUPO "MERCEARIA SECA" -> "MERCEARIA"; item "CREME CHANTILLY" reclassificado
+     para GRUPO "LATICINIOS" / SUBGRUPO "CREMES E MANTEIGAS"; itens com nomes diferentes
      que sao o mesmo item sao unificados sob um unico nome — ver
      `ITENS_UNIFICADOS`).
 
@@ -78,8 +78,8 @@ REQUIRED_RAW_COLUMNS = list(COLUMN_MAP.keys())
 # ============================================================
 _MAPA_EXATO = {
     # Variantes de grafia dos fornecedores ficticios da base sintetica (scripts/gerar_dados_sinteticos.py, ANCORAS)
-    "FRIGORIFICO BARILO S A": "FRIGORIFICO BARILO S/A",
-    "FRIGORIFICO BARILO SA - FILIAL 2": "FRIGORIFICO BARILO S/A",
+    "TORREFACAO BARILO S A": "TORREFACAO BARILO S/A",
+    "TORREFACAO BARILO SA - FILIAL 2": "TORREFACAO BARILO S/A",
     "DISTRIB. VETAMON LTDA": "DISTRIBUIDORA VETAMON LTDA",
     "DISTRIBUIDORA VETAMON LTDA.": "DISTRIBUIDORA VETAMON LTDA",
     "LATICINIOS QUIRANA LTDA - MATRIZ": "LATICINIOS QUIRANA LTDA",
@@ -105,8 +105,8 @@ def padronizar_fornecedores(df):
     Consolida variacoes de nome na coluna RAZAO FORNECEDOR.
     Regras (aplicadas em ordem):
       1. Qualquer nome que contenha a substring "LUPULAR" (filiais e
-         distribuidoras da mesma cervejaria) e substituido integralmente
-         por "CERVEJARIA LUPULAR S/A".
+         distribuidoras da mesma fabricante de bebidas) e substituido integralmente
+         por "BEBIDAS LUPULAR S/A".
       2. Nomes com correspondencia exata no _MAPA_EXATO sao substituidos
          pelo valor mapeado.
     Retorna o DataFrame com a coluna corrigida.
@@ -115,7 +115,7 @@ def padronizar_fornecedores(df):
     if col not in df.columns:
         return df
     mascara_lupular = df[col].str.contains(r"LUPULAR", case=False, na=False)
-    df.loc[mascara_lupular, col] = "CERVEJARIA LUPULAR S/A"
+    df.loc[mascara_lupular, col] = "BEBIDAS LUPULAR S/A"
     df[col] = df[col].replace(_MAPA_EXATO)
     return df
 
@@ -148,9 +148,9 @@ def chave_ordem_grupo(nome):
 # A comparacao ignora caixa e espacos extras. Quando a coluna 'COD ITEM' foi pedida (extra_columns), os nomes
 # unificados tambem passam a usar o codigo do item canonico, para o item nao aparecer com dois codigos.
 ITENS_UNIFICADOS = {
-    'FILE MIGNON BOVINO PECA': [
-        'FILE MIGNON BOVINO',
-        '(MP) FILE MIGNON BOVINO PECA',
+    'CAFE ESPECIAL BLEND ESPRESSO GRAOS': [
+        'CAFE BLEND ESPRESSO GRAOS',
+        '(MP) CAFE ESPECIAL BLEND ESPRESSO GRAOS',
     ],
 }
 
@@ -188,21 +188,21 @@ def tratar_dados_pre_analise(df):
     Regras:
       1. Atualiza a coluna 'GRUPO' conforme GRUPOS_RENOMEADOS: 'MERCEARIA' e 'MERCEARIA SECA'
          (variantes encontradas na base bruta) -> 'MERCEARIA' (nome exibido no portal).
-      2. Trata o item 'POLVO': se 'DESCRICAO_ITEM' == 'POLVO', define
-         'GRUPO' = 'PROTEINAS' e 'SUBGRUPO' = 'PESCADOS'. Sobrescreve
+      2. Trata o item 'CREME CHANTILLY' (cadastrado por engano em CONGELADOS): define
+         'GRUPO' = 'LATICINIOS' e 'SUBGRUPO' = 'CREMES E MANTEIGAS'. Sobrescreve
          valores existentes.
       3. Unifica itens com nomes diferentes que sao o mesmo item
-         (`ITENS_UNIFICADOS`, ex.: os tres nomes do file mignon em peca).
+         (`ITENS_UNIFICADOS`, ex.: os tres nomes do blend de espresso em graos).
     """
     df = unificar_itens(df)
     if "GRUPO" in df.columns:
         df["GRUPO"] = df["GRUPO"].replace(GRUPOS_RENOMEADOS)
 
     if "DESCRICAO_ITEM" in df.columns and "GRUPO" in df.columns and "SUBGRUPO" in df.columns:
-        mascara_polvo = df["DESCRICAO_ITEM"] == "POLVO"
-        if mascara_polvo.any():
-            df.loc[mascara_polvo, "GRUPO"] = "PROTEINAS"
-            df.loc[mascara_polvo, "SUBGRUPO"] = "PESCADOS"
+        mascara_chantilly = df["DESCRICAO_ITEM"] == "CREME CHANTILLY"
+        if mascara_chantilly.any():
+            df.loc[mascara_chantilly, "GRUPO"] = "LATICINIOS"
+            df.loc[mascara_chantilly, "SUBGRUPO"] = "CREMES E MANTEIGAS"
 
     return df
 

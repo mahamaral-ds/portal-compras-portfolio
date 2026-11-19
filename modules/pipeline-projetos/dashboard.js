@@ -12,7 +12,7 @@ try {
      para mostrar o fluxo, nao uma trava de seguranca.
    ===================================================================== */
 
-const STORAGE_KEY = 'quintaluz_pipeline_projetos_v1';
+const STORAGE_KEY = 'quintaluz_cafes_pipeline_projetos_v2';
 const UNLOCK_KEY = 'quintaluz_pipeline_edit_unlocked';
 const EDIT_PASSWORD = 'demo';   // senha de DEMONSTRACAO, exibida na propria janela de desbloqueio
 
@@ -47,8 +47,8 @@ const COUNT_IDS = {
    ===================================================================== */
 const SEED_PROJECTS = [
   {
-    nome: 'RFP de embalagens de delivery',
-    descricao: 'Padronizar tamanhos entre as marcas e cotar o volume do grupo com 5 fornecedores da lista curta.',
+    nome: 'RFP de copos e tampas',
+    descricao: 'Padronizar copos de 240, 360 e 480 ml e tampas entre os três formatos e cotar o volume da rede com 5 fornecedores.',
     responsavel: ['Elisa', 'Diego'],
     area: '',
     status: 'Planejado',
@@ -62,8 +62,8 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Consolidação da mercearia seca',
-    descricao: 'Concentrar grãos, massas e conservas em dois atacadistas com tabela única para todas as casas.',
+    nome: 'Consolidação da mercearia',
+    descricao: 'Concentrar açúcares, xaropes, chocolates e granola em dois atacadistas com tabela única para todas as lojas.',
     responsavel: ['Diego'],
     area: '',
     status: 'Planejado',
@@ -77,8 +77,8 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Contrato anual de cortes bovinos',
-    descricao: 'Negociar preço com reajuste atrelado ao índice da arroba para picanha, contrafilé e fraldinha.',
+    nome: 'Contrato anual de café especial',
+    descricao: 'Negociar o blend de espresso com reajuste atrelado ao preço do arábica e volume garantido para o ano.',
     responsavel: ['Ana Paula', 'Bruno'],
     area: '',
     status: 'Em andamento',
@@ -92,8 +92,8 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Chopp em barril para os bares',
-    descricao: 'Trocar long neck por chopp em barril nas casas de maior giro do Boteco Quintal.',
+    nome: 'Bebidas vegetais para os quiosques',
+    descricao: 'Trocar a bebida de aveia atual por uma versão barista com rendimento maior nos quiosques de maior giro.',
     responsavel: ['Gabriel'],
     area: '',
     status: 'Em andamento',
@@ -108,7 +108,7 @@ const SEED_PROJECTS = [
   },
   {
     nome: 'Hortifrúti regional fora das capitais',
-    descricao: 'Desenvolver produtores locais para as casas de Serra Alta, Porto Claro e Lagoa Bela.',
+    descricao: 'Desenvolver produtores locais de frutas e folhas para as lojas de Serra Alta, Porto Claro e Vale Azul.',
     responsavel: ['Carla'],
     area: '',
     status: 'Em andamento',
@@ -122,12 +122,12 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Porcionamento de proteínas na central',
-    descricao: 'Receber peças inteiras na central de produção e porcionar para as casas, reduzindo perdas.',
+    nome: 'Torra própria na central',
+    descricao: 'Comprar café verde direto de cooperativas e torrar na central de produção parte do blend das lojas.',
     responsavel: ['Bruno', 'Compras e Dados'],
     area: '',
     status: 'Em validação',
-    etapa: 'Piloto em 3 casas',
+    etapa: 'Piloto em 3 lojas',
     prioridade: 'Alta',
     dataInicio: '2026-06-01',
     dataPrevisao: '2026-10-31',
@@ -137,12 +137,12 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Revisão de fornecedores de pescados',
-    descricao: 'Rever a base de pescados com foco em OTIF e rastreabilidade para a marca Maré Quintaluz.',
+    nome: 'Revisão de fornecedores de confeitaria',
+    descricao: 'Rever a base de bolos e doces com foco em OTIF e validade para a linha de vitrine das cafeterias.',
     responsavel: ['Ana Paula'],
     area: '',
     status: 'Em validação',
-    etapa: 'Introdução nas casas',
+    etapa: 'Introdução nas lojas',
     prioridade: 'Média',
     dataInicio: '2026-07-01',
     dataPrevisao: '2026-11-15',
@@ -152,8 +152,8 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Café em grãos com torrefação única',
-    descricao: 'Unificar o blend das cafeterias em uma torrefação, com treinamento de baristas incluso.',
+    nome: 'Leite barista com fornecedor único',
+    descricao: 'Unificar o leite integral barista das lojas em um laticínio, com treinamento de vaporização incluso.',
     responsavel: ['Elisa'],
     area: '',
     status: 'Concluído',
@@ -167,8 +167,8 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Laticínios: troca de mussarela',
-    descricao: 'Homologar nova mussarela com rendimento igual e preço 8% menor.',
+    nome: 'Pão de queijo: troca de fornecedor',
+    descricao: 'Homologar novo pão de queijo congelado com rendimento igual e preço 8% menor.',
     responsavel: ['Carla', 'Diego'],
     area: '',
     status: 'Concluído',
@@ -182,8 +182,8 @@ const SEED_PROJECTS = [
     observacoes: '',
   },
   {
-    nome: 'Azeite com preço travado',
-    descricao: 'Contrato semestral de azeite extra virgem com preço fixo e entrega mensal.',
+    nome: 'Açúcar com preço travado',
+    descricao: 'Contrato semestral de açúcar refinado, demerara e sachês com preço fixo e entrega mensal.',
     responsavel: ['Diego'],
     area: '',
     status: 'Concluído',
@@ -198,7 +198,7 @@ const SEED_PROJECTS = [
   },
   {
     nome: 'Painel de preços por unidade de referência',
-    descricao: 'Usar a Análise de Itens para comparar preço por kg/litro entre casas e fornecedores toda semana.',
+    descricao: 'Usar a Análise de Itens para comparar preço por kg/litro entre lojas e fornecedores toda semana.',
     responsavel: ['Compras e Dados'],
     area: '',
     status: 'Concluído',
@@ -213,7 +213,7 @@ const SEED_PROJECTS = [
   },
   {
     nome: 'Mapa de fornecedores por região',
-    descricao: 'Cruzar UF dos fornecedores com as regiões das casas para encontrar alternativas locais.',
+    descricao: 'Cruzar UF dos fornecedores com as regiões das lojas para encontrar alternativas locais.',
     responsavel: ['Compras e Dados'],
     area: '',
     status: 'Planejado',
